@@ -1,11 +1,5 @@
 package templater
 
-var (
-	FieldNameType = "field_name"
-	ArrayType     = "array"
-	QRCodeType    = "qr_code"
-)
-
 // Info for fill in template.
 type Request struct {
 	UUID     string

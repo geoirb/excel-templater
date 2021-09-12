@@ -4,6 +4,6 @@ import (
 	"errors"
 )
 
-var(
+var (
 	errTopicIsExist = errors.New("topic is exist")
 )

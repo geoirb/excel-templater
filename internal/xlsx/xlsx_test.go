@@ -1,8 +1,10 @@
-package templater_test
+package xlsx_test
 
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"os"
 	"testing"
 
@@ -10,33 +12,31 @@ import (
 
 	"github.com/geoirb/go-templater/internal/placeholder"
 	"github.com/geoirb/go-templater/internal/qrcode"
-	"github.com/geoirb/go-templater/internal/templater"
+	"github.com/geoirb/go-templater/internal/xlsx"
 )
 
-func TestXLSX(t *testing.T) {
+func BenchmarkXLSX(b *testing.B) {
 	placeholder, err := placeholder.New()
-	assert.NoError(t, err)
+	assert.NoError(b, err)
 
 	qrcode := qrcode.NewCreator()
-	svc := templater.NewService(
-		nil,
-		nil,
+	svc := xlsx.NewFacade(
 		placeholder,
 		qrcode,
-		nil,
 	)
 
 	data, err := os.ReadFile("/home/geoirb/project/go/geoirb/templater/_path_to_template/payload.json")
-	assert.NoError(t, err)
+	assert.NoError(b, err)
 
 	var payload interface{}
 	json.Unmarshal(data, &payload)
 
-	err = svc.Xlsx(
+	// for i := 0; i < b.N; i++ {
+	r, _ := svc.FillIn(
 		context.Background(),
 		"/home/geoirb/project/go/geoirb/templater/_path_to_template/template.xlsx",
-		"/home/geoirb/project/go/geoirb/templater/_path_to_template/result.xlsx",
 		payload,
 	)
-	assert.NoError(t, err)
+	os.Remove("/home/geoirb/project/go/geoirb/templater/_path_to_template/result.xlsx")
+	fmt.Println(ioutil.ReadAll(r))
 }

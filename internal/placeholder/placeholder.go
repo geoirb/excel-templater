@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/geoirb/go-templater/internal/templater"
+	"github.com/geoirb/go-templater/internal/xlsx"
 )
 
 // Placeholder .,,
@@ -43,13 +43,13 @@ func (p *Placeholder) GetValue(payload interface{}, placeholder string) (placeho
 	keys := p.placeholderReg.FindAllString(placeholder, -1)
 	for _, key := range keys {
 		var ok bool
-		placeholderType = templater.FieldNameType
+		placeholderType = xlsx.FieldNameType
 		if p.arrayRegexp.Match([]byte(key)) {
-			placeholderType = templater.ArrayType
+			placeholderType = xlsx.ArrayType
 			return
 		}
 		if p.qrCodeRegexp.Match([]byte(key)) {
-			placeholderType = templater.QRCodeType
+			placeholderType = xlsx.QRCodeType
 		}
 		value, ok = p.value(value, key)
 
