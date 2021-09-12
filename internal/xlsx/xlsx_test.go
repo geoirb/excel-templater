@@ -23,7 +23,7 @@ func TestFillIn(t *testing.T) {
 		qrcode,
 	)
 
-	data, err := os.ReadFile("/home/geoirb/project/go/geoirb/templater/_path_to_template/payload.json")
+	data, err := os.ReadFile("/home/geoirb/project/go/geoirb/templater/.vscode/payload.json")
 	assert.NoError(t, err)
 
 	var payload interface{}
@@ -31,7 +31,7 @@ func TestFillIn(t *testing.T) {
 
 	_, err = svc.FillIn(
 		context.Background(),
-		"/home/geoirb/project/go/geoirb/templater/_path_to_template/template.xlsx",
+		"/home/geoirb/project/go/geoirb/templater/.vscode/template.xlsx",
 		payload,
 	)
 	assert.NoError(t, err)
