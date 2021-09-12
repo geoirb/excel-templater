@@ -1,8 +1,10 @@
 package xlsx
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io"
 
 	"github.com/geoirb/go-templater/internal/excelize"
 )
@@ -42,16 +44,16 @@ func NewFacade(
 	return f
 }
 
-func (s *Facade) FillIn(ctx context.Context, template, dst string, payload interface{}) error {
+func (s *Facade) FillIn(ctx context.Context, template string, payload interface{}) (r io.Reader, err error) {
 	f, err := excelize.OpenFile(template)
 	if err != nil {
-		return err
+		return
 	}
 
 	sheets := f.GetSheetList()
 	if len(sheets) == 0 {
 		err = fmt.Errorf("template file has wrong number of sheets: %d", len(sheets))
-		return err
+		return
 	}
 
 	sheetIdx := 0
@@ -59,34 +61,42 @@ func (s *Facade) FillIn(ctx context.Context, template, dst string, payload inter
 
 	rows, err := f.GetRows(sheet)
 	if err != nil {
-		return err
+		return
 	}
 	for rowIdx := 0; rowIdx < len(rows); rowIdx++ {
 		for colIdx, cellValue := range rows[rowIdx] {
 			if s.placeholder.Is(cellValue) {
-				placeholderType, value, err := s.placeholder.GetValue(payload, cellValue)
+				var (
+					placeholderType string
+					value           interface{}
+				)
+				placeholderType, value, err = s.placeholder.GetValue(payload, cellValue)
 				if err != nil {
 					continue
 				}
 
 				if keyHandler, ok := s.keyHandler[placeholderType]; ok {
 					if err = keyHandler(f, sheetIdx, &rowIdx, colIdx, value); err != nil {
-						return fmt.Errorf("placeholder: %s err: %s", cellValue, err)
+						err = fmt.Errorf("placeholder: %s err: %s", cellValue, err)
+						return
 					}
 					rows, err = f.GetRows(sheet)
 					if err != nil {
-						return err
+						err = fmt.Errorf("placeholder: %s err: %s", cellValue, err)
+						return
 					}
 				}
 			}
 		}
 	}
 
-	if err = f.SaveAs(dst); err != nil {
-		return fmt.Errorf("save template to tmp file err: %s", err)
+	var result bytes.Buffer
+	if err = f.Write(&result); err != nil {
+		err = fmt.Errorf("save template to tmp file err: %s", err)
+		return
 	}
-
-	return err
+	r = &result
+	return
 }
 
 func (s *Facade) fieldNameKyeHandler(file *excelize.File, sheetIdx int, rowIdx *int, colIdx int, value interface{}) (err error) {

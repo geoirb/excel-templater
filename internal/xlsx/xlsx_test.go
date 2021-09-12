@@ -3,6 +3,8 @@ package xlsx_test
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"os"
 	"testing"
 
@@ -29,15 +31,12 @@ func BenchmarkXLSX(b *testing.B) {
 	var payload interface{}
 	json.Unmarshal(data, &payload)
 
-	b.N = 100
-	for i := 0; i < b.N; i++ {
-		svc.FillIn(
-			context.Background(),
-			"/home/geoirb/project/go/geoirb/templater/_path_to_template/template.xlsx",
-			"/home/geoirb/project/go/geoirb/templater/_path_to_template/result.xlsx",
-			payload,
-		)
-		os.Remove("/home/geoirb/project/go/geoirb/templater/_path_to_template/result.xlsx")
-	}
-
+	// for i := 0; i < b.N; i++ {
+	r, _ := svc.FillIn(
+		context.Background(),
+		"/home/geoirb/project/go/geoirb/templater/_path_to_template/template.xlsx",
+		payload,
+	)
+	os.Remove("/home/geoirb/project/go/geoirb/templater/_path_to_template/result.xlsx")
+	fmt.Println(ioutil.ReadAll(r))
 }

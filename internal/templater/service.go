@@ -2,17 +2,17 @@ package templater
 
 import (
 	"context"
-	"os"
+	"io"
+	"io/ioutil"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 )
 
-type fillInFunc func(ctx context.Context, template, tmpFile string, payload interface{}) error
+type fillInFunc func(ctx context.Context, template string, payload interface{}) (io.Reader, error)
 
 type path interface {
 	Template(name string) string
-	TmpFile(name string) string
 }
 
 type parser interface {
@@ -69,15 +69,14 @@ func (s *service) FillIn(ctx context.Context, req Request) (res Response, err er
 		UserID: req.UserID,
 	}
 
-	templatePath, tmpFilePath := s.path.Template(req.Template), s.path.TmpFile(req.Template)
-	if err = fillIn(ctx, templatePath, tmpFilePath, req.Payload); err != nil {
+	templatePath := s.path.Template(req.Template)
+	result, err := fillIn(ctx, templatePath, req.Payload)
+	if err != nil {
 		level.Error(logger).Log("msg", "fill in template", "template", templateType, "err", err)
 		return
 	}
-
-	defer os.Remove(tmpFilePath)
-	if res.Document, err = os.ReadFile(tmpFilePath); err != nil {
-		level.Error(logger).Log("msg", "read tmp file", "tmp file name", tmpFilePath, "err", err)
+	if res.Document, err = ioutil.ReadAll(result); err != nil {
+		level.Error(logger).Log("msg", "read result", "err", err)
 	}
 	return
 }

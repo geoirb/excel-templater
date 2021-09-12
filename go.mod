@@ -11,7 +11,6 @@ require (
 	github.com/go-kit/kit v0.11.0
 	github.com/go-logfmt/logfmt v0.5.0 // indirect
 	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db // indirect
-	github.com/google/uuid v1.1.2
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826
 	github.com/pierrec/lz4 v1.0.2-0.20190131084431-473cd7ce01a1 // indirect
@@ -21,6 +20,7 @@ require (
 	github.com/richardlehane/msoleps v1.0.1 // indirect
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/stretchr/testify v1.7.0
+	github.com/twinj/uuid v1.0.0
 	github.com/xuri/efp v0.0.0-20210322160811-ab561f5b45e3
 	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97
 	golang.org/x/net v0.0.0-20210726213435-c6fcb2dbf985
@@ -29,6 +29,8 @@ require (
 )
 
 require (
+	github.com/myesui/uuid v1.0.0 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	gopkg.in/check.v1 v1.0.0-20200902074654-038fdea0a05b // indirect
+	gopkg.in/stretchr/testify.v1 v1.2.2 // indirect
 )

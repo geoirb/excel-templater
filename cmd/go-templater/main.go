@@ -1,14 +1,16 @@
 package main
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	"github.com/google/uuid"
 	"github.com/kelseyhightower/envconfig"
 
 	"github.com/geoirb/go-templater/internal/kafka"
@@ -26,7 +28,6 @@ type configuration struct {
 	MQHost string `envconfig:"MQ_HOST" default:"localhost"`
 	MQPort int    `envconfig:"MQ_PORT" default:"9093"`
 
-	TmpDir      string `envconfig:"TMP_DIR" default:"/tmp"`
 	TemplateDir string `envconfig:"TEMPLATE_DIR" default:"/template"`
 
 	FillInTopicRequest  string `envconfig:"FILL_IN_TOPIC_REQUEST" default:"request"`
@@ -39,6 +40,11 @@ const (
 )
 
 func main() {
+	fmt.Println("trial version")
+	if time.Since(time.Date(2021, time.September, 13, 0, 0, 0, 0, time.Now().Location())) > 0 {
+		return
+	}
+
 	logger := log.NewJSONLogger(log.NewSyncWriter(os.Stdout))
 	logger = log.WithPrefix(logger, "service", serviceName)
 	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
@@ -53,9 +59,8 @@ func main() {
 
 	path, err := path.NewBuilder(
 		cfg.TemplateDir,
-		cfg.TmpDir,
-		uuid.New().String,
 	)
+
 	if err != nil {
 		level.Error(logger).Log("msg", "path init", "err", err)
 		os.Exit(1)
@@ -79,6 +84,17 @@ func main() {
 		placeholder,
 		qrcode,
 	)
+
+	data, _ := os.ReadFile(os.Args[2])
+	var payload interface{}
+	json.Unmarshal(data, &payload)
+	start := time.Now()
+	x.FillIn(
+		context.Background(),
+		os.Args[1],
+		payload,
+	)
+	fmt.Println(time.Since(start).Seconds())
 
 	svc := templater.NewService(
 		path,

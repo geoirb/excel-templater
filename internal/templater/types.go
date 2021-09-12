@@ -1,7 +1,5 @@
 package templater
 
-
-
 // Info for fill in template.
 type Request struct {
 	UUID     string
