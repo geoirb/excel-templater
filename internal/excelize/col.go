@@ -28,10 +28,12 @@ type Cols struct {
 	sheetXML                             []byte
 }
 
+// Get current col.
 func (cols *Cols) Current() int {
 	return cols.curCol
 }
 
+// Get total number col.
 func (cols *Cols) Total() int {
 	return cols.curCol
 }

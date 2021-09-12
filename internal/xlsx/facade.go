@@ -101,7 +101,7 @@ func (s *Facade) FillIn(ctx context.Context, template string, payload interface{
 
 func (s *Facade) fieldNameKyeHandler(file *excelize.File, sheetIdx int, rowIdx *int, colIdx int, value interface{}) (err error) {
 	sheet := file.GetSheetName(sheetIdx)
-	axis := fmt.Sprintf("%s%d", getColByIdx(colIdx), *rowIdx+1)
+	axis, _ := excelize.CoordinatesToCellName(colIdx+1, *rowIdx+1)
 	file.SetCellValue(sheet, axis, value)
 	return
 }
@@ -160,13 +160,13 @@ func (s *Facade) qrCodeHandler(file *excelize.File, sheetIdx int, rowIdx *int, c
 		if data, err = s.qrcode.Create(str, int(qrcodeSize)); err != nil {
 			return fmt.Errorf("qrcode generate: %s", err)
 		}
-		axis := fmt.Sprintf("%s%d", getColByIdx(colIdx), *rowIdx+1)
+		axis, _ := excelize.CoordinatesToCellName(colIdx+1, *rowIdx+1)
 		if err = file.AddPictureFromBytes(sheet, axis, "", "", ".png", data); err != nil {
 			return
 		}
 		file.SetCellValue(sheet, axis, "")
-		h, _ := file.GetHMergeCell(sheet, axis)
-		colIdx += h
+		colNum, _, _ := file.GetNumMergeCell(sheet, axis)
+		colIdx += colNum
 	}
 	return
 }

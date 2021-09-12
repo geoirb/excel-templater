@@ -2,7 +2,6 @@ package excelize
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 )
 
@@ -166,26 +165,29 @@ func (f *File) GetMergeCells(sheet string) ([]MergeCell, error) {
 	return mergeCells, err
 }
 
-func (f *File) GetHMergeCell(sheet string, axis string) (int, error) {
+// GetMergeCells provides a function to get the number of merged rows and columns by axis cell
+// from a worksheet currently.
+func (f *File) GetNumMergeCell(sheet string, axis string) (colNum int, rowNum int, err error) {
 	ws, err := f.workSheetReader(sheet)
 	if err != nil {
-		return 0, err
+		return
 	}
 
-	re := regexp.MustCompile(`[[:digit:]]`)
 	if ws.MergeCells != nil {
 		for i := range ws.MergeCells.Cells {
 			ref := ws.MergeCells.Cells[i].Ref
 			cells := strings.Split(ref, ":")
 			if cells[0] == axis {
-				cellFirst, cellLast := re.ReplaceAllString(cells[0], ""), re.ReplaceAllString(cells[1], "[")
-				h := cellLast[0] - cellFirst[0]
-				return int(h) + 1, nil
+				col1, row1, _ := CellNameToCoordinates(cells[0])
+				col2, row2, _ := CellNameToCoordinates(cells[1])
+				colNum, rowNum = col2-col1+1, row2-row1+1
+				return
 			}
 		}
 	}
-
-	return 1, err
+	colNum = 1
+	rowNum = 1
+	return
 }
 
 // MergeCell define a merged cell data.
