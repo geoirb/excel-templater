@@ -19,6 +19,7 @@ import (
 	"github.com/geoirb/go-templater/internal/response"
 	"github.com/geoirb/go-templater/internal/templater"
 	"github.com/geoirb/go-templater/internal/templater/mq"
+	"github.com/geoirb/go-templater/internal/xlsx"
 )
 
 type configuration struct {
@@ -74,11 +75,15 @@ func main() {
 
 	qrcode := qrcode.NewCreator()
 
+	x := xlsx.NewFacade(
+		placeholder,
+		qrcode,
+	)
+
 	svc := templater.NewService(
 		path,
 		parser,
-		placeholder,
-		qrcode,
+		x.FillIn,
 		logger,
 	)
 

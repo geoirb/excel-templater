@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/geoirb/go-templater/internal/templater"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/geoirb/go-templater/internal/xlsx"
 )
 
 const (
@@ -62,20 +63,20 @@ var (
 		{
 			placeholder:     "{data_to_A1}",
 			value:           "A1",
-			placeholderType: templater.FieldNameType,
+			placeholderType: xlsx.FieldNameType,
 		},
 		{
 			placeholder:     "{data_to_B:data_to_6}",
 			value:           26.0,
-			placeholderType: templater.FieldNameType,
+			placeholderType: xlsx.FieldNameType,
 		},
 		{
 			placeholder:     "{data:array}",
-			placeholderType: templater.ArrayType,
+			placeholderType: xlsx.ArrayType,
 		},
 		{
 			placeholder:     "{qr_code_0}",
-			placeholderType: templater.QRCodeType,
+			placeholderType: xlsx.QRCodeType,
 		},
 	}
 )
