@@ -82,7 +82,9 @@ var (
 )
 
 func TestIs(t *testing.T) {
-	p, err := New()
+	p, err := New(
+		false,
+	)
 	assert.NoError(t, err)
 
 	assert.True(t, p.Is(testPlaceholder))
@@ -94,7 +96,9 @@ func TestGetValue(t *testing.T) {
 	err := json.Unmarshal([]byte(testJson), &payload)
 	assert.NoError(t, err)
 
-	p, err := New()
+	p, err := New(
+		true,
+	)
 	assert.NoError(t, err)
 
 	for _, test := range testCase {

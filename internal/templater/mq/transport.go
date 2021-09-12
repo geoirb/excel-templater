@@ -6,19 +6,12 @@ import (
 	"github.com/geoirb/go-templater/internal/templater"
 )
 
-type builder func(payload interface{}, err error) ([]byte, error)
-
 // FillInTransport ...
 type FillInTransport struct {
-	builder builder
 }
 
-func NewFillInTransport(
-	builder builder,
-) *FillInTransport {
-	return &FillInTransport{
-		builder: builder,
-	}
+func NewFillInTransport() *FillInTransport {
+	return &FillInTransport{}
 }
 
 // DecodeRequest ...
@@ -29,8 +22,14 @@ func (t *FillInTransport) DecodeRequest(message []byte) (templater.Request, erro
 }
 
 // DecodeRequest ...
-func (t *FillInTransport) EncodeResponse(res templater.Response, err error) (message []byte) {
-	payload := response(res)
-	message, _ = t.builder(payload, err)
+func (t *FillInTransport) EncodeResponse(res templater.Response) (message []byte) {
+	payload := response{
+		UUID:      res.UUID,
+		UserID:    res.UserID,
+		IsSuccess: len(res.Error) == 0,
+		Document:  res.Document,
+		Error:     res.Error,
+	}
+	message, _ = json.Marshal(payload)
 	return
 }

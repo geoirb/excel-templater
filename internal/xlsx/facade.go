@@ -72,7 +72,7 @@ func (s *Facade) FillIn(ctx context.Context, template string, payload interface{
 				)
 				placeholderType, value, err = s.placeholder.GetValue(payload, cellValue)
 				if err != nil {
-					continue
+					return
 				}
 
 				if keyHandler, ok := s.keyHandler[placeholderType]; ok {

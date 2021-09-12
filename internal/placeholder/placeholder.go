@@ -13,11 +13,17 @@ type Placeholder struct {
 	placeholderReg      *regexp.Regexp
 	arrayRegexp         *regexp.Regexp
 	qrCodeRegexp        *regexp.Regexp
+
+	useBlankValue bool
 }
 
 // New ...
-func New() (f *Placeholder, err error) {
-	f = &Placeholder{}
+func New(
+	useBlankValue bool,
+) (f *Placeholder, err error) {
+	f = &Placeholder{
+		useBlankValue: useBlankValue,
+	}
 	if f.placeholderGroupReg, err = regexp.Compile(placeholderGroupRegexp); err != nil {
 		return
 	}
@@ -61,9 +67,13 @@ func (p *Placeholder) GetValue(payload interface{}, placeholder string) (placeho
 	return
 }
 
-func (*Placeholder) value(payload interface{}, key string) (interface{}, bool) {
+func (p *Placeholder) value(payload interface{}, key string) (interface{}, bool) {
 	if m, ok := payload.(map[string]interface{}); ok {
 		value, isExist := m[key]
+		if !isExist && p.useBlankValue {
+			value = ""
+			isExist = true
+		}
 		return value, isExist
 	}
 	return nil, false

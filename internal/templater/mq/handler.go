@@ -18,10 +18,10 @@ func (s *fillInServe) Handle(ctx context.Context, message []byte) {
 
 	var res templater.Response
 	if err == nil {
-		res, err = s.svc.FillIn(ctx, request)
+		res = s.svc.FillIn(ctx, request)
 	}
 
-	s.Publish(s.transport.EncodeResponse(res, err))
+	s.Publish(s.transport.EncodeResponse(res))
 }
 
 func NewFillInHandler(

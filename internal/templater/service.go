@@ -49,18 +49,19 @@ func NewService(
 }
 
 // FillIn fills template by req.
-func (s *service) FillIn(ctx context.Context, req Request) (res Response, err error) {
+func (s *service) FillIn(ctx context.Context, req Request) (res Response) {
 	logger := log.WithPrefix(s.logger, "method", "FillIn", "uuid", req.UUID)
 
 	templateType, err := s.parser.Type(req.Template)
 	if err != nil {
 		level.Error(logger).Log("msg", "template type", "err", err)
+		res.Error = err.Error()
 		return
 	}
 	fillIn, isExist := s.fillIn[templateType]
 	if !isExist {
 		level.Error(logger).Log("msg", "unknown type", "type", templateType)
-		err = errUnknownTemplateType
+		res.Error = errUnknownTemplateType.Error()
 		return
 	}
 
@@ -73,6 +74,7 @@ func (s *service) FillIn(ctx context.Context, req Request) (res Response, err er
 	result, err := fillIn(ctx, templatePath, req.Payload)
 	if err != nil {
 		level.Error(logger).Log("msg", "fill in template", "template", templateType, "err", err)
+		res.Error = err.Error()
 		return
 	}
 	if res.Document, err = ioutil.ReadAll(result); err != nil {

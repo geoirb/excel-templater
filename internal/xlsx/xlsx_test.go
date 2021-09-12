@@ -3,8 +3,6 @@ package xlsx_test
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -15,9 +13,9 @@ import (
 	"github.com/geoirb/go-templater/internal/xlsx"
 )
 
-func BenchmarkXLSX(b *testing.B) {
-	placeholder, err := placeholder.New()
-	assert.NoError(b, err)
+func TestFillIn(t *testing.T) {
+	placeholder, err := placeholder.New(false)
+	assert.NoError(t, err)
 
 	qrcode := qrcode.NewCreator()
 	svc := xlsx.NewFacade(
@@ -26,17 +24,15 @@ func BenchmarkXLSX(b *testing.B) {
 	)
 
 	data, err := os.ReadFile("/home/geoirb/project/go/geoirb/templater/_path_to_template/payload.json")
-	assert.NoError(b, err)
+	assert.NoError(t, err)
 
 	var payload interface{}
 	json.Unmarshal(data, &payload)
 
-	// for i := 0; i < b.N; i++ {
-	r, _ := svc.FillIn(
+	_, err = svc.FillIn(
 		context.Background(),
 		"/home/geoirb/project/go/geoirb/templater/_path_to_template/template.xlsx",
 		payload,
 	)
-	os.Remove("/home/geoirb/project/go/geoirb/templater/_path_to_template/result.xlsx")
-	fmt.Println(ioutil.ReadAll(r))
+	assert.NoError(t, err)
 }

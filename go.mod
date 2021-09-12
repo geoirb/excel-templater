@@ -20,7 +20,6 @@ require (
 	github.com/richardlehane/msoleps v1.0.1 // indirect
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/stretchr/testify v1.7.0
-	github.com/twinj/uuid v1.0.0
 	github.com/xuri/efp v0.0.0-20210322160811-ab561f5b45e3
 	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97
 	golang.org/x/net v0.0.0-20210726213435-c6fcb2dbf985
@@ -29,8 +28,6 @@ require (
 )
 
 require (
-	github.com/myesui/uuid v1.0.0 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	gopkg.in/check.v1 v1.0.0-20200902074654-038fdea0a05b // indirect
-	gopkg.in/stretchr/testify.v1 v1.2.2 // indirect
 )

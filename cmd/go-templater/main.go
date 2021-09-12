@@ -18,7 +18,6 @@ import (
 	"github.com/geoirb/go-templater/internal/path"
 	"github.com/geoirb/go-templater/internal/placeholder"
 	"github.com/geoirb/go-templater/internal/qrcode"
-	"github.com/geoirb/go-templater/internal/response"
 	"github.com/geoirb/go-templater/internal/templater"
 	"github.com/geoirb/go-templater/internal/templater/mq"
 	"github.com/geoirb/go-templater/internal/xlsx"
@@ -27,6 +26,8 @@ import (
 type configuration struct {
 	MQHost string `envconfig:"MQ_HOST" default:"localhost"`
 	MQPort int    `envconfig:"MQ_PORT" default:"9093"`
+
+	UseBlankValue bool `envconfig:"USE_BLANK_VALUE" default:"false"`
 
 	TemplateDir string `envconfig:"TEMPLATE_DIR" default:"/template"`
 
@@ -40,10 +41,7 @@ const (
 )
 
 func main() {
-	fmt.Println("trial version")
-	if time.Since(time.Date(2021, time.September, 13, 0, 0, 0, 0, time.Now().Location())) > 0 {
-		return
-	}
+	// runtime.GOMAXPROCS(1)
 
 	logger := log.NewJSONLogger(log.NewSyncWriter(os.Stdout))
 	logger = log.WithPrefix(logger, "service", serviceName)
@@ -72,7 +70,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	placeholder, err := placeholder.New()
+	placeholder, err := placeholder.New(
+		cfg.UseBlankValue,
+	)
 	if err != nil {
 		level.Error(logger).Log("msg", "placeholder init", "err", err)
 		os.Exit(1)
@@ -114,9 +114,7 @@ func main() {
 
 	handler := mq.NewFillInHandler(
 		svc,
-		mq.NewFillInTransport(
-			response.Build,
-		),
+		mq.NewFillInTransport(),
 		mqKafka.NewPublish(cfg.FillInTopicResponse),
 	)
 
