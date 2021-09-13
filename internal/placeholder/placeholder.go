@@ -13,16 +13,17 @@ type Placeholder struct {
 	placeholderReg      *regexp.Regexp
 	arrayRegexp         *regexp.Regexp
 	qrCodeRegexp        *regexp.Regexp
+	imageReqexp         *regexp.Regexp
 
-	useBlankValue bool
+	valuesAreRequired bool
 }
 
 // New ...
 func New(
-	useBlankValue bool,
+	valuesAreRequired bool,
 ) (f *Placeholder, err error) {
 	f = &Placeholder{
-		useBlankValue: useBlankValue,
+		valuesAreRequired: valuesAreRequired,
 	}
 	if f.placeholderGroupReg, err = regexp.Compile(placeholderGroupRegexp); err != nil {
 		return
@@ -34,7 +35,10 @@ func New(
 		return
 	}
 
-	f.qrCodeRegexp, err = regexp.Compile(qrCodeRegexp)
+	if f.qrCodeRegexp, err = regexp.Compile(qrCodeRegexp); err != nil {
+		return
+	}
+	f.imageReqexp, err = regexp.Compile(imageReqexp)
 	return
 }
 
@@ -57,6 +61,9 @@ func (p *Placeholder) GetValue(payload interface{}, placeholder string) (placeho
 		if p.qrCodeRegexp.Match([]byte(key)) {
 			placeholderType = xlsx.QRCodeType
 		}
+		if p.imageReqexp.Match([]byte(key)) {
+			placeholderType = xlsx.ImageType
+		}
 		value, ok = p.value(value, key)
 
 		if !ok {
@@ -70,7 +77,7 @@ func (p *Placeholder) GetValue(payload interface{}, placeholder string) (placeho
 func (p *Placeholder) value(payload interface{}, key string) (interface{}, bool) {
 	if m, ok := payload.(map[string]interface{}); ok {
 		value, isExist := m[key]
-		if !isExist && p.useBlankValue {
+		if !isExist && !p.valuesAreRequired {
 			value = ""
 			isExist = true
 		}

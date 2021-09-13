@@ -6,7 +6,7 @@ services:
       MQ_HOST: kafka
       MQ_PORT: 9092
     volumes: 
-      - ./_path_to_template:/template
+      - ../.vscode:/template
 
   zookeeper:
     image: wurstmeister/zookeeper

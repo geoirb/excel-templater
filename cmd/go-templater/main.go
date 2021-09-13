@@ -1,13 +1,10 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
@@ -27,7 +24,7 @@ type configuration struct {
 	MQHost string `envconfig:"MQ_HOST" default:"localhost"`
 	MQPort int    `envconfig:"MQ_PORT" default:"9093"`
 
-	UseBlankValue bool `envconfig:"USE_BLANK_VALUE" default:"false"`
+	ValuesAreRequired bool `envconfig:"VALUE_ARE_REQUIRED" default:"true"`
 
 	TemplateDir string `envconfig:"TEMPLATE_DIR" default:"/template"`
 
@@ -71,7 +68,7 @@ func main() {
 	}
 
 	placeholder, err := placeholder.New(
-		cfg.UseBlankValue,
+		cfg.ValuesAreRequired,
 	)
 	if err != nil {
 		level.Error(logger).Log("msg", "placeholder init", "err", err)
@@ -84,17 +81,6 @@ func main() {
 		placeholder,
 		qrcode,
 	)
-
-	data, _ := os.ReadFile(os.Args[2])
-	var payload interface{}
-	json.Unmarshal(data, &payload)
-	start := time.Now()
-	x.FillIn(
-		context.Background(),
-		os.Args[1],
-		payload,
-	)
-	fmt.Println(time.Since(start).Seconds())
 
 	svc := templater.NewService(
 		path,

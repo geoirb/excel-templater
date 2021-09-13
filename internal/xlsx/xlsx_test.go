@@ -14,7 +14,7 @@ import (
 )
 
 func TestFillIn(t *testing.T) {
-	placeholder, err := placeholder.New(false)
+	placeholder, err := placeholder.New(true)
 	assert.NoError(t, err)
 
 	qrcode := qrcode.NewCreator()
@@ -27,8 +27,8 @@ func TestFillIn(t *testing.T) {
 	assert.NoError(t, err)
 
 	var payload interface{}
-	json.Unmarshal(data, &payload)
-
+	err = json.Unmarshal(data, &payload)
+	assert.NoError(t, err)
 	_, err = svc.FillIn(
 		context.Background(),
 		"/home/geoirb/project/go/geoirb/templater/.vscode/template.xlsx",

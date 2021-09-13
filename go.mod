@@ -22,6 +22,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/xuri/efp v0.0.0-20210322160811-ab561f5b45e3
 	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97
+	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
 	golang.org/x/net v0.0.0-20210726213435-c6fcb2dbf985
 	golang.org/x/text v0.3.6
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
