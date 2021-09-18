@@ -1,10 +1,8 @@
-package placeholder
+package xlsx
 
 import (
 	"fmt"
 	"regexp"
-
-	"github.com/geoirb/go-templater/internal/xlsx"
 )
 
 // Placeholder .,,
@@ -19,27 +17,17 @@ type Placeholder struct {
 }
 
 // New ...
-func New(
+func newPlaceholdParser(
 	valuesAreRequired bool,
-) (f *Placeholder, err error) {
-	f = &Placeholder{
-		valuesAreRequired: valuesAreRequired,
+) *Placeholder {
+	return &Placeholder{
+		valuesAreRequired:   valuesAreRequired,
+		placeholderGroupReg: regexp.MustCompile(placeholderGroupRegexp),
+		placeholderReg:      regexp.MustCompile(placeholderReqexp),
+		arrayRegexp:         regexp.MustCompile(arrayRegexp),
+		qrCodeRegexp:        regexp.MustCompile(qrCodeRegexp),
+		imageReqexp:         regexp.MustCompile(imageReqexp),
 	}
-	if f.placeholderGroupReg, err = regexp.Compile(placeholderGroupRegexp); err != nil {
-		return
-	}
-	if f.placeholderReg, err = regexp.Compile(placeholderReqexp); err != nil {
-		return
-	}
-	if f.arrayRegexp, err = regexp.Compile(arrayRegexp); err != nil {
-		return
-	}
-
-	if f.qrCodeRegexp, err = regexp.Compile(qrCodeRegexp); err != nil {
-		return
-	}
-	f.imageReqexp, err = regexp.Compile(imageReqexp)
-	return
 }
 
 // Is returns true if str is playsholder.
@@ -53,16 +41,16 @@ func (p *Placeholder) GetValue(payload interface{}, placeholder string) (placeho
 	keys := p.placeholderReg.FindAllString(placeholder, -1)
 	for _, key := range keys {
 		var ok bool
-		placeholderType = xlsx.FieldNameType
+		placeholderType = FieldNameType
 		if p.arrayRegexp.Match([]byte(key)) {
-			placeholderType = xlsx.ArrayType
+			placeholderType = ArrayType
 			return
 		}
 		if p.qrCodeRegexp.Match([]byte(key)) {
-			placeholderType = xlsx.QRCodeType
+			placeholderType = QRCodeType
 		}
 		if p.imageReqexp.Match([]byte(key)) {
-			placeholderType = xlsx.ImageType
+			placeholderType = ImageType
 		}
 		value, ok = p.value(value, key)
 

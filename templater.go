@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/geoirb/go-templater/internal/excelize"
+	"github.com/xuri/excelize/v2"
 )
 
 type placeholder interface {
@@ -14,27 +14,25 @@ type placeholder interface {
 	GetValue(payload interface{}, placeholder string) (t string, value interface{}, err error)
 }
 
-type qrcode interface {
-	Create(str string, size int) ([]byte, error)
-}
+type qrcodeEncodeFunc func(str string, size int) ([]byte, error)
 
 type handlerPlaceholderHandler func(file *excelize.File, sheetIdx int, rowNumb *int, colIdx int, value interface{}) (err error)
 
-// Facade for xlsx
-type Facade struct {
+// Templater for xlsx.
+type Templater struct {
 	keyHandler map[string]handlerPlaceholderHandler
 
-	placeholder placeholder
-	qrcode      qrcode
+	placeholder  placeholder
+	qrcodeEncode qrcodeEncodeFunc
 }
 
-func NewFacade(
-	placeholder placeholder,
-	qrcode qrcode,
-) *Facade {
-	f := &Facade{
-		placeholder: placeholder,
-		qrcode:      qrcode,
+// NewTemplater for xlsx.
+func NewTemplater(
+	valuesAreRequired bool,
+) *Templater {
+	f := &Templater{
+		placeholder:  newPlaceholdParser(valuesAreRequired),
+		qrcodeEncode: Encode,
 	}
 	f.keyHandler = map[string]handlerPlaceholderHandler{
 		FieldNameType: f.fieldNameKyeHandler,
@@ -46,7 +44,7 @@ func NewFacade(
 }
 
 // FillIn template from payload.
-func (s *Facade) FillIn(ctx context.Context, template string, payload interface{}) (r io.Reader, err error) {
+func (s *Templater) FillIn(ctx context.Context, template string, payload interface{}) (r io.Reader, err error) {
 	f, err := excelize.OpenFile(template)
 	if err != nil {
 		return

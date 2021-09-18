@@ -1,10 +1,9 @@
-package placeholder
+package xlsx
 
 import (
 	"encoding/json"
 	"testing"
 
-	"github.com/geoirb/go-templater/internal/xlsx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -60,49 +59,48 @@ type testCase struct {
 var (
 	nilInterface interface{}
 	tests        = []testCase{
-		// {
-		// 	placeholder:     "{data_to_A1}",
-		// 	value:           "A1",
-		// 	placeholderType: xlsx.FieldNameType,
-		// },
-		// {
-		// 	placeholder:     "{data_to_B:data_to_6}",
-		// 	value:           26.0,
-		// 	placeholderType: xlsx.FieldNameType,
-		// },
+		{
+			placeholder:     "{data_to_A1}",
+			value:           "A1",
+			placeholderType: FieldNameType,
+		},
+		{
+			placeholder:     "{data_to_B:data_to_6}",
+			value:           26.0,
+			placeholderType: FieldNameType,
+		},
 		{
 			placeholder:     "{data_to_B:image_0}",
 			value:           "image_value",
-			placeholderType: xlsx.ImageType,
+			placeholderType: ImageType,
 		},
-		// {
-		// 	placeholder:     "{data:array}",
-		// 	placeholderType: xlsx.ArrayType,
-		// },
-		// {
-		// 	placeholder:     "{qr_code_0}",
-		// 	placeholderType: xlsx.QRCodeType,
-		// },
+		{
+			placeholder:     "{data:array}",
+			placeholderType: ArrayType,
+		},
+		{
+			placeholder:     "{qr_code_0}",
+			placeholderType: QRCodeType,
+		},
 	}
 
 	testRequired = testCase{
 		placeholder:     "{required}",
 		value:           "required_value",
-		placeholderType: xlsx.FieldNameType,
+		placeholderType: FieldNameType,
 	}
 
 	testNoRequired = testCase{
 		placeholder:     "{no_required_value}",
 		value:           "",
-		placeholderType: xlsx.FieldNameType,
+		placeholderType: FieldNameType,
 	}
 )
 
 func TestIs(t *testing.T) {
-	p, err := New(
+	p := newPlaceholdParser(
 		false,
 	)
-	assert.NoError(t, err)
 
 	assert.True(t, p.Is(testPlaceholder))
 	assert.False(t, p.Is(testStr))
@@ -113,10 +111,9 @@ func TestGetValue(t *testing.T) {
 	err := json.Unmarshal([]byte(testJson), &payload)
 	assert.NoError(t, err)
 
-	p, err := New(
+	p := newPlaceholdParser(
 		true,
 	)
-	assert.NoError(t, err)
 
 	for _, test := range tests {
 		actualType, actualValue, err := p.GetValue(payload, test.placeholder)
