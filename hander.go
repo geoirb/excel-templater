@@ -14,7 +14,7 @@ func (s *Templater) fieldNameKyeHandler(file *excelize.File, sheetIdx int, rowId
 	return file.SetCellValue(sheet, axis, value)
 }
 
-func (s *Templater) arrayKeyHandler(file *excelize.File, sheetIdx int, rowIdx *int, _ int, value interface{}) error {
+func (s *Templater) arrayKeyHandler(file *excelize.File, sheetIdx int, rowIdx *int, colIdx int, value interface{}) error {
 	rowNumb := *rowIdx + 1
 	sheet := file.GetSheetName(sheetIdx)
 	rows, _ := file.GetRows(sheet)
@@ -27,14 +27,15 @@ func (s *Templater) arrayKeyHandler(file *excelize.File, sheetIdx int, rowIdx *i
 	hRow := rows[hRowNumb-1]
 	for i, item := range array {
 		file.DuplicateRowTo(sheet, hRowNumb, hRowNumb+i+1)
-		for idx, cellValue := range hRow {
+		for j := colIdx; j < len(hRow); j++ {
+			cellValue := hRow[j]
 			placeholderType, value, err := s.placeholder.GetValue(item, cellValue)
 			if err != nil {
 				return err
 			}
 			if placeholderType == FieldNameType {
 				rowIdx := hRowNumb + i
-				s.fieldNameKyeHandler(file, sheetIdx, &rowIdx, idx, value)
+				s.fieldNameKyeHandler(file, sheetIdx, &rowIdx, j, value)
 			}
 		}
 	}
@@ -130,7 +131,7 @@ func getNumMergeCell(file *excelize.File, sheet string, axis string) (colNum int
 	for _, mergetCell := range mergedCells {
 		if mergetCell.GetStartAxis() == axis {
 			col1, row1, _ := excelize.CellNameToCoordinates(mergetCell.GetStartAxis())
-			col2, row2, _ := excelize.CellNameToCoordinates(mergetCell.GetStartAxis())
+			col2, row2, _ := excelize.CellNameToCoordinates(mergetCell.GetEndAxis())
 			colNum, rowNum = col2-col1+1, row2-row1+1
 			return
 		}
