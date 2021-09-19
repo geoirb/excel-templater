@@ -12,13 +12,13 @@ const (
 	defaultImage = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII="
 )
 
-func (s *Templater) fieldNameKyeHandler(file *excelize.File, sheet string, rowIdx *int, colIdx int, value interface{}) error {
-	axis, _ := excelize.CoordinatesToCellName(colIdx+1, *rowIdx+1)
+func (s *Templater) fieldNameKyeHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) error {
+	axis, _ := excelize.CoordinatesToCellName(*colIdx+1, *rowIdx+1)
 	file.SetCellValue(sheet, axis, value)
 	return nil
 }
 
-func (s *Templater) arrayKeyHandler(file *excelize.File, sheet string, rowIdx *int, colIdx int, value interface{}) error {
+func (s *Templater) arrayKeyHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) error {
 	rowNumb := *rowIdx + 1
 	rows, _ := file.GetRows(sheet)
 
@@ -30,7 +30,7 @@ func (s *Templater) arrayKeyHandler(file *excelize.File, sheet string, rowIdx *i
 	hRow := rows[hRowNumb-1]
 	for i, item := range array {
 		file.DuplicateRowTo(sheet, hRowNumb, hRowNumb+i+1)
-		for j := colIdx; j < len(hRow); j++ {
+		for j := *colIdx; j < len(hRow); j++ {
 			cellValue := hRow[j]
 			placeholderType, value, err := s.placeholder.GetValue(item, cellValue)
 			if err != nil {
@@ -38,7 +38,7 @@ func (s *Templater) arrayKeyHandler(file *excelize.File, sheet string, rowIdx *i
 			}
 			if placeholderType == FieldNameType {
 				rowIdx := hRowNumb + i
-				s.fieldNameKyeHandler(file, sheet, &rowIdx, j, value)
+				s.fieldNameKyeHandler(file, sheet, &rowIdx, &j, value)
 			}
 		}
 	}
@@ -50,10 +50,11 @@ func (s *Templater) arrayKeyHandler(file *excelize.File, sheet string, rowIdx *i
 		*rowIdx--
 	}
 	*rowIdx = *rowIdx + len(array) - 2
+	*colIdx = 0
 	return nil
 }
 
-func (s *Templater) qrCodeHandler(file *excelize.File, sheet string, rowIdx *int, colIdx int, value interface{}) (err error) {
+func (s *Templater) qrCodeHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) (err error) {
 	colSize, _ := file.GetRowHeight(sheet, *rowIdx+1)
 	qrcodeSize := colSize * 1.333
 	qrcodeArr, ok := value.([]interface{})
@@ -72,20 +73,20 @@ func (s *Templater) qrCodeHandler(file *excelize.File, sheet string, rowIdx *int
 			err = fmt.Errorf("qrCodeHandler: qrcode generate %s", err)
 			return
 		}
-		axis, _ := excelize.CoordinatesToCellName(colIdx+1, *rowIdx+1)
+		axis, _ := excelize.CoordinatesToCellName(*colIdx+1, *rowIdx+1)
 		if err = file.AddPictureFromBytes(sheet, axis, "", "", ".png", data); err != nil {
 			err = fmt.Errorf("qrCodeHandler: insert qrcode to file %s", err)
 			return
 		}
 		file.SetCellValue(sheet, axis, "")
 		colNum, _, _ := getNumMergeCell(file, sheet, axis)
-		colIdx += colNum
+		*colIdx += colNum
 	}
 	return
 }
 
-func (s *Templater) imageHandler(file *excelize.File, sheet string, rowIdx *int, colIdx int, value interface{}) error {
-	axis, _ := excelize.CoordinatesToCellName(colIdx+1, *rowIdx+1)
+func (s *Templater) imageHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) error {
+	axis, _ := excelize.CoordinatesToCellName(*colIdx+1, *rowIdx+1)
 
 	image, ok := value.(string)
 	if !ok {

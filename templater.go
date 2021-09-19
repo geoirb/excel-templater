@@ -25,7 +25,7 @@ type placeholderParser interface {
 
 type qrcodeEncodeFunc func(str string, size int) ([]byte, error)
 
-type placeholderHandler func(file *excelize.File, sheet string, rowNumb *int, colIdx int, value interface{}) (err error)
+type placeholderHandler func(file *excelize.File, sheet string, rowNumb, colIdx *int, value interface{}) (err error)
 
 // Templater for xlsx.
 type Templater struct {
@@ -95,7 +95,7 @@ func (s *Templater) fillInSheet(f *excelize.File, sheet string, payload interfac
 				}
 
 				if keyHandler, ok := s.keyHandler[placeholderType]; ok {
-					if err = keyHandler(f, sheet, &rowIdx, colIdx, value); err != nil {
+					if err = keyHandler(f, sheet, &rowIdx, &colIdx, value); err != nil {
 						err = fmt.Errorf("placeholder: %s err: %s", cellValue, err)
 						return
 					}
