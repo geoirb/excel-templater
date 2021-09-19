@@ -9,20 +9,30 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
-type placeholder interface {
+const (
+	defaultImage = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII="
+
+	// Placeholder types.
+	FieldNameType = "field_name"
+	ArrayType     = "array"
+	QRCodeType    = "qr_code"
+	ImageType     = "image"
+)
+
+type placeholderParser interface {
 	Is(str string) bool
 	GetValue(payload interface{}, placeholder string) (t string, value interface{}, err error)
 }
 
 type qrcodeEncodeFunc func(str string, size int) ([]byte, error)
 
-type handlerPlaceholderHandler func(file *excelize.File, sheetIdx int, rowNumb *int, colIdx int, value interface{}) (err error)
+type placeholderHandler func(file *excelize.File, sheet string, rowNumb *int, colIdx int, value interface{}) (err error)
 
 // Templater for xlsx.
 type Templater struct {
-	keyHandler map[string]handlerPlaceholderHandler
+	keyHandler map[string]placeholderHandler
 
-	placeholder  placeholder
+	placeholder  placeholderParser
 	qrcodeEncode qrcodeEncodeFunc
 }
 
@@ -34,7 +44,7 @@ func NewTemplater(
 		placeholder:  newPlaceholdParser(valuesAreRequired),
 		qrcodeEncode: Encode,
 	}
-	f.keyHandler = map[string]handlerPlaceholderHandler{
+	f.keyHandler = map[string]placeholderHandler{
 		FieldNameType: f.fieldNameKyeHandler,
 		ArrayType:     f.arrayKeyHandler,
 		QRCodeType:    f.qrCodeHandler,
@@ -51,18 +61,28 @@ func (s *Templater) FillIn(ctx context.Context, template string, payload interfa
 	}
 
 	sheets := f.GetSheetList()
-	if len(sheets) == 0 {
-		err = fmt.Errorf("template file has wrong number of sheets: %d", len(sheets))
-		return
+	for _, sheet := range sheets {
+		if err = s.fillInSheet(f, sheet, payload); err != nil {
+			err = fmt.Errorf("sheet: %s %s", sheet, err)
+			return
+		}
 	}
 
-	sheetIdx := 0
-	sheet := sheets[sheetIdx]
+	var result bytes.Buffer
+	if err = f.Write(&result); err != nil {
+		err = fmt.Errorf("save template to tmp file err: %s", err)
+		return
+	}
+	r = &result
+	return
+}
 
+func (s *Templater) fillInSheet(f *excelize.File, sheet string, payload interface{}) (err error) {
 	rows, err := f.GetRows(sheet)
 	if err != nil {
 		return
 	}
+
 	for rowIdx := 0; rowIdx < len(rows); rowIdx++ {
 		for colIdx, cellValue := range rows[rowIdx] {
 			if s.placeholder.Is(cellValue) {
@@ -76,12 +96,11 @@ func (s *Templater) FillIn(ctx context.Context, template string, payload interfa
 				}
 
 				if keyHandler, ok := s.keyHandler[placeholderType]; ok {
-					if err = keyHandler(f, sheetIdx, &rowIdx, colIdx, value); err != nil {
+					if err = keyHandler(f, sheet, &rowIdx, colIdx, value); err != nil {
 						err = fmt.Errorf("placeholder: %s err: %s", cellValue, err)
 						return
 					}
-					rows, err = f.GetRows(sheet)
-					if err != nil {
+					if rows, err = f.GetRows(sheet); err != nil {
 						err = fmt.Errorf("placeholder: %s err: %s", cellValue, err)
 						return
 					}
@@ -89,12 +108,5 @@ func (s *Templater) FillIn(ctx context.Context, template string, payload interfa
 			}
 		}
 	}
-
-	var result bytes.Buffer
-	if err = f.Write(&result); err != nil {
-		err = fmt.Errorf("save template to tmp file err: %s", err)
-		return
-	}
-	r = &result
 	return
 }

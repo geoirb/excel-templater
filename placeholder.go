@@ -5,6 +5,14 @@ import (
 	"regexp"
 )
 
+const (
+	placeholderGroupRegexp = "{([_a-zA-Z0-9:]+)}$"
+	placeholderReqexp      = "([_a-zA-Z0-9]+)"
+	arrayRegexp            = "array$"
+	qrCodeRegexp           = "qr_code_[_a-zA-Z0-9]+"
+	imageReqexp            = "image_[_a-zA-Z0-9]+"
+)
+
 // Placeholder .,,
 type Placeholder struct {
 	placeholderGroupReg *regexp.Regexp
@@ -55,7 +63,7 @@ func (p *Placeholder) GetValue(payload interface{}, placeholder string) (placeho
 		value, ok = p.value(value, key)
 
 		if !ok {
-			err = fmt.Errorf("wrong format payload: not found key %s in placeholder %s", key, placeholder)
+			err = fmt.Errorf("wrong payload: not found key %s from placeholder %s", key, placeholder)
 			return
 		}
 	}

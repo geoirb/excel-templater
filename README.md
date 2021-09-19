@@ -32,41 +32,46 @@
 
 Пример:
 
-`payload` запроса:
-```json
-{
-  "field_name_0": "value_field_name_0",
-  "field_name_1":{
-    "field_name_3": "value_field_name_3",
-    "data":[
-      {
-        "1":1.0,
-        "2_0":2.0,
-        "3_0":3.0
-      },
-      {
-        "1":1.1,
-        "2_0":2.1,
-        "3_0":3.1
-      },
-      {
-        "1":1.2,
-        "2_0":2.2,
-        "3_0":3.2
-      }
-    ],
-    "qr_code_0":[
-      "qr-code-0-0",
-      "qr-code-0-1"
-    ]
-  }
-}
-```
-
 шаблон
 
 ![шаблон](images/template.png)
 
+данные для заполнения
+
+```json
+{
+    "field_name_0": "value_field_name_0",
+    "field_name_1":{
+      "field_name_1": "value_field_name_1_1",
+      "array_1":[
+        {
+          "1":1.0,
+          "2_0":2.0,
+          "3_0":3.0
+        },
+        {
+          "1":1.1,
+          "2_0":2.1,
+          "3_0":3.1
+        },
+        {
+          "1":1.2,
+          "2_0":2.2,
+          "3_0":3.2
+        }
+      ],
+      "qr_code_1":[
+        "https://t.me/geoirb",
+        "https://github.com/geoirb"
+      ]
+    },
+    "qr_code_0":[
+        "https://t.me/geoirb",
+        "https://github.com/geoirb"
+    ],
+    "image_0":"data:image/png;base64,iVBORw0KGg...",
+}
+```
 результат
 
 ![результат](images/result.png)

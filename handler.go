@@ -8,20 +8,19 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
-func (s *Templater) fieldNameKyeHandler(file *excelize.File, sheetIdx int, rowIdx *int, colIdx int, value interface{}) (err error) {
-	sheet := file.GetSheetName(sheetIdx)
+func (s *Templater) fieldNameKyeHandler(file *excelize.File, sheet string, rowIdx *int, colIdx int, value interface{}) error {
 	axis, _ := excelize.CoordinatesToCellName(colIdx+1, *rowIdx+1)
-	return file.SetCellValue(sheet, axis, value)
+	file.SetCellValue(sheet, axis, value)
+	return nil
 }
 
-func (s *Templater) arrayKeyHandler(file *excelize.File, sheetIdx int, rowIdx *int, colIdx int, value interface{}) error {
+func (s *Templater) arrayKeyHandler(file *excelize.File, sheet string, rowIdx *int, colIdx int, value interface{}) error {
 	rowNumb := *rowIdx + 1
-	sheet := file.GetSheetName(sheetIdx)
 	rows, _ := file.GetRows(sheet)
 
 	array, ok := value.([]interface{})
 	if !ok {
-		return fmt.Errorf("arrayKeyHandler: wrong type payload")
+		return fmt.Errorf("arrayKeyHandler: wrong type payload, array type expected")
 	}
 	hRowNumb := rowNumb + 1
 	hRow := rows[hRowNumb-1]
@@ -35,7 +34,7 @@ func (s *Templater) arrayKeyHandler(file *excelize.File, sheetIdx int, rowIdx *i
 			}
 			if placeholderType == FieldNameType {
 				rowIdx := hRowNumb + i
-				s.fieldNameKyeHandler(file, sheetIdx, &rowIdx, j, value)
+				s.fieldNameKyeHandler(file, sheet, &rowIdx, j, value)
 			}
 		}
 	}
@@ -50,27 +49,28 @@ func (s *Templater) arrayKeyHandler(file *excelize.File, sheetIdx int, rowIdx *i
 	return nil
 }
 
-func (s *Templater) qrCodeHandler(file *excelize.File, sheetIdx int, rowIdx *int, colIdx int, value interface{}) (err error) {
-	sheet := file.GetSheetName(sheetIdx)
+func (s *Templater) qrCodeHandler(file *excelize.File, sheet string, rowIdx *int, colIdx int, value interface{}) (err error) {
 	colSize, _ := file.GetRowHeight(sheet, *rowIdx+1)
 	qrcodeSize := colSize * 1.333
 	qrcodeArr, ok := value.([]interface{})
 	if !ok {
-		err = fmt.Errorf("qrCodeHandler: wrong type payload")
-		return err
+		err = fmt.Errorf("qrCodeHandler: wrong type payload, array type expected")
+		return
 	}
-
 	for _, qrcodeStr := range qrcodeArr {
 		str, ok := qrcodeStr.(string)
 		if !ok {
-			return fmt.Errorf("qrCodeHandler: wrong type payload")
+			err = fmt.Errorf("qrCodeHandler: wrong type payload, string type expected")
+			return
 		}
 		var data []byte
 		if data, err = s.qrcodeEncode(str, int(qrcodeSize)); err != nil {
-			return fmt.Errorf("qrcode generate: %s", err)
+			err = fmt.Errorf("qrCodeHandler: qrcode generate %s", err)
+			return
 		}
 		axis, _ := excelize.CoordinatesToCellName(colIdx+1, *rowIdx+1)
 		if err = file.AddPictureFromBytes(sheet, axis, "", "", ".png", data); err != nil {
+			err = fmt.Errorf("qrCodeHandler: insert qrcode to file %s", err)
 			return
 		}
 		file.SetCellValue(sheet, axis, "")
@@ -80,22 +80,27 @@ func (s *Templater) qrCodeHandler(file *excelize.File, sheetIdx int, rowIdx *int
 	return
 }
 
-func (s *Templater) imageHandler(file *excelize.File, sheetIdx int, rowIdx *int, colIdx int, value interface{}) (err error) {
-	sheet := file.GetSheetName(sheetIdx)
+func (s *Templater) imageHandler(file *excelize.File, sheet string, rowIdx *int, colIdx int, value interface{}) error {
 	axis, _ := excelize.CoordinatesToCellName(colIdx+1, *rowIdx+1)
-	file.SetCellValue(sheet, axis, "")
 
 	image, ok := value.(string)
 	if !ok {
-		return fmt.Errorf("imageHandler: wrong type payload")
+		return fmt.Errorf("imageHandler: wrong type payload, string type expected")
 	}
 	i := strings.Index(image, ",")
 	image = image[i+1:]
 	if len(image) == 0 {
 		image = defaultImage
 	}
-	imageBytes, _ := base64.StdEncoding.DecodeString(image)
-	return file.AddPictureFromBytes(sheet, axis, "", "", ".png", imageBytes)
+	imageBytes, err := base64.StdEncoding.DecodeString(image)
+	if err != nil {
+		return fmt.Errorf("imageHandler: decode image %s", err)
+	}
+	file.SetCellValue(sheet, axis, "")
+	if err := file.AddPictureFromBytes(sheet, axis, "", "", ".png", imageBytes); err != nil {
+		return fmt.Errorf("imageHandler: insert image to file %s", err)
+	}
+	return nil
 }
 
 // For quick work add to github.com/xuri/excelize/v2 function:
