@@ -19,20 +19,20 @@ func (s *Templater) fieldNameKyeHandler(file *excelize.File, sheet string, rowId
 }
 
 func (s *Templater) arrayKeyHandler(file *excelize.File, sheet string, rowIdx *int, colIdx int, value interface{}) error {
-	rowNumb := *rowIdx + 1
-	rows, _ := file.GetRows(sheet)
-
 	array, ok := value.([]interface{})
 	if !ok {
 		return fmt.Errorf("arrayKeyHandler: wrong type payload, array type expected")
 	}
-	hRowNumb := rowNumb + 1
+
+	rowNumb := *rowIdx + 1
+	hRowNumb := *rowIdx + 1
+
+	rows, _ := file.GetRows(sheet)
 	hRow := rows[hRowNumb-1]
 	for i, item := range array {
 		file.DuplicateRowTo(sheet, hRowNumb, hRowNumb+i+1)
 		for j := colIdx; j < len(hRow); j++ {
-			cellValue := hRow[j]
-			placeholderType, value, err := s.placeholder.GetValue(item, cellValue)
+			placeholderType, value, err := s.placeholder.GetValue(item, hRow[j])
 			if err != nil {
 				return err
 			}
