@@ -25,7 +25,7 @@ func (s *Templater) arrayKeyHandler(file *excelize.File, sheet string, rowIdx, c
 	}
 
 	rowNumb := *rowIdx + 1
-	hRowNumb := *rowIdx + 1
+	hRowNumb := rowNumb + 1
 	rows, _ := file.GetRows(sheet)
 	hRow := rows[hRowNumb-1]
 	for i, item := range array {
@@ -48,7 +48,7 @@ func (s *Templater) arrayKeyHandler(file *excelize.File, sheet string, rowIdx, c
 		file.RemoveRow(sheet, *rowIdx)
 		*rowIdx--
 	}
-	*rowIdx = *rowIdx + len(array) - 2
+	*rowIdx = *rowIdx + len(array)
 	*colIdx = 0
 	return nil
 }
