@@ -8,6 +8,10 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
+const (
+	defaultImage = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII="
+)
+
 func (s *Templater) fieldNameKyeHandler(file *excelize.File, sheet string, rowIdx *int, colIdx int, value interface{}) error {
 	axis, _ := excelize.CoordinatesToCellName(colIdx+1, *rowIdx+1)
 	file.SetCellValue(sheet, axis, value)

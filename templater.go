@@ -10,7 +10,6 @@ import (
 )
 
 const (
-	defaultImage = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII="
 
 	// Placeholder types.
 	FieldNameType = "field_name"
