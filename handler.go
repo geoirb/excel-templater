@@ -12,13 +12,13 @@ const (
 	defaultImage = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII="
 )
 
-func (s *Templater) fieldNameKyeHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) error {
+func (t *Templater) fieldNameKyeHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) error {
 	axis, _ := excelize.CoordinatesToCellName(*colIdx+1, *rowIdx+1)
 	file.SetCellValue(sheet, axis, value)
 	return nil
 }
 
-func (s *Templater) arrayKeyHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) error {
+func (t *Templater) arrayKeyHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) error {
 	array, ok := value.([]interface{})
 	if !ok {
 		return fmt.Errorf("arrayKeyHandler: wrong type payload, array type expected")
@@ -31,13 +31,13 @@ func (s *Templater) arrayKeyHandler(file *excelize.File, sheet string, rowIdx, c
 	for i, item := range array {
 		file.DuplicateRowTo(sheet, hRowNumb, hRowNumb+1+i)
 		for j := *colIdx; j < len(hRow); j++ {
-			placeholderType, value, err := s.placeholder.GetValue(item, hRow[j])
+			placeholderType, value, err := t.placeholder.GetValue(item, hRow[j])
 			if err != nil {
 				return err
 			}
 			if placeholderType == FieldNameType {
 				rowIdx := hRowNumb + i
-				s.fieldNameKyeHandler(file, sheet, &rowIdx, &j, value)
+				t.fieldNameKyeHandler(file, sheet, &rowIdx, &j, value)
 			}
 		}
 	}
@@ -48,12 +48,12 @@ func (s *Templater) arrayKeyHandler(file *excelize.File, sheet string, rowIdx, c
 		file.RemoveRow(sheet, *rowIdx)
 		*rowIdx--
 	}
-	*rowIdx = *rowIdx + len(array) -2
+	*rowIdx = *rowIdx + len(array) - 2
 	*colIdx = 0
 	return nil
 }
 
-func (s *Templater) qrCodeHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) (err error) {
+func (t *Templater) qrCodeHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) (err error) {
 	qrcodeArr, ok := value.([]interface{})
 	if !ok {
 		err = fmt.Errorf("qrCodeHandler: wrong type payload, array type expected")
@@ -69,7 +69,7 @@ func (s *Templater) qrCodeHandler(file *excelize.File, sheet string, rowIdx, col
 			return
 		}
 		var data []byte
-		if data, err = s.qrcodeEncode(str, int(qrcodeSize)); err != nil {
+		if data, err = t.qrcodeEncode(str, int(qrcodeSize)); err != nil {
 			err = fmt.Errorf("qrCodeHandler: qrcode generate %s", err)
 			return
 		}

@@ -53,7 +53,7 @@ func NewTemplater(
 }
 
 // FillIn template from payload.
-func (s *Templater) FillIn(ctx context.Context, template string, payload interface{}) (r io.Reader, err error) {
+func (t *Templater) FillIn(ctx context.Context, template string, payload interface{}) (r io.Reader, err error) {
 	f, err := excelize.OpenFile(template)
 	if err != nil {
 		return
@@ -61,7 +61,7 @@ func (s *Templater) FillIn(ctx context.Context, template string, payload interfa
 
 	sheets := f.GetSheetList()
 	for _, sheet := range sheets {
-		if err = s.fillInSheet(f, sheet, payload); err != nil {
+		if err = t.fillInSheet(f, sheet, payload); err != nil {
 			err = fmt.Errorf("sheet: %s %s", sheet, err)
 			return
 		}
@@ -76,7 +76,7 @@ func (s *Templater) FillIn(ctx context.Context, template string, payload interfa
 	return
 }
 
-func (s *Templater) fillInSheet(f *excelize.File, sheet string, payload interface{}) (err error) {
+func (t *Templater) fillInSheet(f *excelize.File, sheet string, payload interface{}) (err error) {
 	rows, err := f.GetRows(sheet)
 	if err != nil {
 		return
@@ -84,17 +84,17 @@ func (s *Templater) fillInSheet(f *excelize.File, sheet string, payload interfac
 
 	for rowIdx := 0; rowIdx < len(rows); rowIdx++ {
 		for colIdx, cellValue := range rows[rowIdx] {
-			if s.placeholder.Is(cellValue) {
+			if t.placeholder.Is(cellValue) {
 				var (
 					placeholderType string
 					value           interface{}
 				)
-				placeholderType, value, err = s.placeholder.GetValue(payload, cellValue)
+				placeholderType, value, err = t.placeholder.GetValue(payload, cellValue)
 				if err != nil {
 					return
 				}
 
-				if keyHandler, ok := s.keyHandler[placeholderType]; ok {
+				if keyHandler, ok := t.keyHandler[placeholderType]; ok {
 					if err = keyHandler(f, sheet, &rowIdx, &colIdx, value); err != nil {
 						err = fmt.Errorf("placeholder: %s err: %s", cellValue, err)
 						return
