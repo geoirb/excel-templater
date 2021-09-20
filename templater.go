@@ -23,7 +23,7 @@ type placeholderParser interface {
 	GetValue(payload interface{}, placeholder string) (t string, value interface{}, err error)
 }
 
-type qrcodeEncodeFunc func(str string, size int) ([]byte, error)
+type qrcodeEncodeFunc func(str string, pixels int) ([]byte, error)
 
 type placeholderHandler func(file *excelize.File, sheet string, rowNumb, colIdx *int, value interface{}) (err error)
 

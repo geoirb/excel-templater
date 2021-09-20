@@ -10,6 +10,8 @@ import (
 
 const (
 	defaultImage = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII="
+
+	pixelCoefficient = 1.3333
 )
 
 func (t *Templater) fieldNameKyeHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) error {
@@ -59,8 +61,8 @@ func (t *Templater) qrCodeHandler(file *excelize.File, sheet string, rowIdx, col
 		err = fmt.Errorf("qrCodeHandler: wrong type payload, array type expected")
 		return
 	}
-	colSize, _ := file.GetRowHeight(sheet, *rowIdx+1)
-	qrcodeSize := colSize * 1.333
+	rowHeight, _ := file.GetRowHeight(sheet, *rowIdx+1)
+	qrcodePixels := pixelCoefficient * rowHeight
 
 	for _, qrcodeStr := range qrcodeArr {
 		str, ok := qrcodeStr.(string)
@@ -69,7 +71,7 @@ func (t *Templater) qrCodeHandler(file *excelize.File, sheet string, rowIdx, col
 			return
 		}
 		var data []byte
-		if data, err = t.qrcodeEncode(str, int(qrcodeSize)); err != nil {
+		if data, err = t.qrcodeEncode(str, int(qrcodePixels)); err != nil {
 			err = fmt.Errorf("qrCodeHandler: qrcode generate %s", err)
 			return
 		}
