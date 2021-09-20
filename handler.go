@@ -48,7 +48,7 @@ func (s *Templater) arrayKeyHandler(file *excelize.File, sheet string, rowIdx, c
 		file.RemoveRow(sheet, *rowIdx)
 		*rowIdx--
 	}
-	*rowIdx = *rowIdx + len(array)
+	*rowIdx = *rowIdx + len(array) -2
 	*colIdx = 0
 	return nil
 }
