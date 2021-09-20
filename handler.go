@@ -44,7 +44,7 @@ func (t *Templater) arrayKeyHandler(file *excelize.File, sheet string, rowIdx, c
 
 	file.RemoveRow(sheet, rowNumb)
 	file.RemoveRow(sheet, rowNumb)
-	if len(array) == 0 {
+	if len(array) == 0 && *rowIdx != 0 {
 		file.RemoveRow(sheet, *rowIdx)
 		*rowIdx--
 	}
