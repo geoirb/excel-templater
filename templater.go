@@ -12,7 +12,7 @@ import (
 const (
 	// placeholder types.
 	fieldNameType = "field_name"
-	arrayType     = "array"
+	tableType     = "array"
 	qrCodeType    = "qr_code"
 	imageType     = "image"
 )
@@ -39,7 +39,7 @@ func NewTemplater(
 	}
 	f.keyHandler = map[string]placeholderHandler{
 		fieldNameType: f.fieldNameKyeHandler,
-		arrayType:     f.arrayKeyHandler,
+		tableType:     f.tableKeyHandler,
 		qrCodeType:    f.qrCodeHandler,
 		imageType:     f.imageHandler,
 	}

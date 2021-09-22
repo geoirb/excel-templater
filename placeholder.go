@@ -8,7 +8,7 @@ import (
 const (
 	placeholderGroupRegexp = "{([_a-zA-Z0-9:]+)}$"
 	placeholderReqexp      = "([_a-zA-Z0-9]+)"
-	arrayRegexp            = "array$"
+	tableRegexp            = "table$"
 	qrCodeRegexp           = "qr_code_[_a-zA-Z0-9]+"
 	imageReqexp            = "image_[_a-zA-Z0-9]+"
 )
@@ -16,7 +16,7 @@ const (
 type placeholder struct {
 	placeholderGroupReg *regexp.Regexp
 	placeholderReg      *regexp.Regexp
-	arrayRegexp         *regexp.Regexp
+	tableRegexp         *regexp.Regexp
 	qrCodeRegexp        *regexp.Regexp
 	imageReqexp         *regexp.Regexp
 
@@ -30,7 +30,7 @@ func newPlaceholdParser(
 		valuesAreRequired:   valuesAreRequired,
 		placeholderGroupReg: regexp.MustCompile(placeholderGroupRegexp),
 		placeholderReg:      regexp.MustCompile(placeholderReqexp),
-		arrayRegexp:         regexp.MustCompile(arrayRegexp),
+		tableRegexp:         regexp.MustCompile(tableRegexp),
 		qrCodeRegexp:        regexp.MustCompile(qrCodeRegexp),
 		imageReqexp:         regexp.MustCompile(imageReqexp),
 	}
@@ -48,8 +48,8 @@ func (p *placeholder) GetValue(payload interface{}, placeholder string) (placeho
 	for _, key := range keys {
 		var ok bool
 		placeholderType = fieldNameType
-		if p.arrayRegexp.Match([]byte(key)) {
-			placeholderType = arrayType
+		if p.tableRegexp.Match([]byte(key)) {
+			placeholderType = tableType
 			return
 		}
 		if p.qrCodeRegexp.Match([]byte(key)) {

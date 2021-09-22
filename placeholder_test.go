@@ -76,7 +76,7 @@ var (
 		},
 		{
 			placeholder:     "{data:array}",
-			placeholderType: arrayType,
+			placeholderType: tableType,
 		},
 		{
 			placeholder:     "{qr_code_0}",

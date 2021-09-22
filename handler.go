@@ -20,10 +20,10 @@ func (t *Templater) fieldNameKyeHandler(file *excelize.File, sheet string, rowId
 	return nil
 }
 
-func (t *Templater) arrayKeyHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) error {
+func (t *Templater) tableKeyHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) error {
 	array, ok := value.([]interface{})
 	if !ok {
-		return fmt.Errorf("arrayKeyHandler: wrong type payload, array type expected")
+		return fmt.Errorf("tableKeyHandler: wrong type payload, array type expected")
 	}
 
 	rowNumb := *rowIdx + 1
@@ -46,10 +46,12 @@ func (t *Templater) arrayKeyHandler(file *excelize.File, sheet string, rowIdx, c
 
 	file.RemoveRow(sheet, rowNumb)
 	file.RemoveRow(sheet, rowNumb)
-	if len(array) == 0 && *rowIdx != 0 {
-		file.RemoveRow(sheet, *rowIdx)
-		*rowIdx--
-	}
+	// TODO:
+	// deleting title of table
+	// if len(array) == 0 && *rowIdx != 0 {
+	// 	file.RemoveRow(sheet, *rowIdx)
+	// 	*rowIdx--
+	// }
 	*rowIdx = *rowIdx + len(array) - 2
 	*colIdx = 0
 	return nil
@@ -67,9 +69,10 @@ func (t *Templater) qrCodeHandler(file *excelize.File, sheet string, rowIdx, col
 	for _, qrcodeStr := range qrcodeArr {
 		str, ok := qrcodeStr.(string)
 		if !ok {
-			err = fmt.Errorf("qrCodeHandler: wrong type payload, string type expected")
+			err = fmt.Errorf("qrCodeHandler: wrong type elements of array, string  type expected")
 			return
 		}
+
 		var data []byte
 		if data, err = t.qrcodeEncode(str, int(qrcodePixels)); err != nil {
 			err = fmt.Errorf("qrCodeHandler: qrcode generate %s", err)
