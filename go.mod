@@ -1,4 +1,4 @@
-module githab.com/geoirb/xlsx-templater
+module github.com/geoirb/excel-templater
 
 go 1.17
 

@@ -1,4 +1,4 @@
-package xlsx
+package excel
 
 import (
 	"encoding/json"
@@ -62,38 +62,38 @@ var (
 		{
 			placeholder:     "{data_to_A1}",
 			value:           "A1",
-			placeholderType: FieldNameType,
+			placeholderType: fieldNameType,
 		},
 		{
 			placeholder:     "{data_to_B:data_to_6}",
 			value:           26.0,
-			placeholderType: FieldNameType,
+			placeholderType: fieldNameType,
 		},
 		{
 			placeholder:     "{data_to_B:image_0}",
 			value:           "image_value",
-			placeholderType: ImageType,
+			placeholderType: imageType,
 		},
 		{
 			placeholder:     "{data:array}",
-			placeholderType: ArrayType,
+			placeholderType: arrayType,
 		},
 		{
 			placeholder:     "{qr_code_0}",
-			placeholderType: QRCodeType,
+			placeholderType: qrCodeType,
 		},
 	}
 
 	testRequired = testCase{
 		placeholder:     "{required}",
 		value:           "required_value",
-		placeholderType: FieldNameType,
+		placeholderType: fieldNameType,
 	}
 
 	testNoRequired = testCase{
 		placeholder:     "{no_required_value}",
 		value:           "",
-		placeholderType: FieldNameType,
+		placeholderType: fieldNameType,
 	}
 )
 

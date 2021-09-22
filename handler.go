@@ -1,4 +1,4 @@
-package xlsx
+package excel
 
 import (
 	"encoding/base64"
@@ -37,7 +37,7 @@ func (t *Templater) arrayKeyHandler(file *excelize.File, sheet string, rowIdx, c
 			if err != nil {
 				return err
 			}
-			if placeholderType == FieldNameType {
+			if placeholderType == fieldNameType {
 				rowIdx := hRowNumb + i
 				t.fieldNameKyeHandler(file, sheet, &rowIdx, &j, value)
 			}

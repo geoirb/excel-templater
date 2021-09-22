@@ -1,4 +1,4 @@
-package xlsx
+package excel
 
 import (
 	"bytes"
@@ -10,32 +10,26 @@ import (
 )
 
 const (
-
-	// Placeholder types.
-	FieldNameType = "field_name"
-	ArrayType     = "array"
-	QRCodeType    = "qr_code"
-	ImageType     = "image"
+	// placeholder types.
+	fieldNameType = "field_name"
+	arrayType     = "array"
+	qrCodeType    = "qr_code"
+	imageType     = "image"
 )
-
-type placeholderParser interface {
-	Is(str string) bool
-	GetValue(payload interface{}, placeholder string) (t string, value interface{}, err error)
-}
 
 type qrcodeEncodeFunc func(str string, pixels int) ([]byte, error)
 
 type placeholderHandler func(file *excelize.File, sheet string, rowNumb, colIdx *int, value interface{}) (err error)
 
-// Templater for xlsx.
+// Templater for excel.
 type Templater struct {
 	keyHandler map[string]placeholderHandler
 
-	placeholder  placeholderParser
+	placeholder  *placeholder
 	qrcodeEncode qrcodeEncodeFunc
 }
 
-// NewTemplater for xlsx.
+// NewTemplater for excel.
 func NewTemplater(
 	valuesAreRequired bool,
 ) *Templater {
@@ -44,10 +38,10 @@ func NewTemplater(
 		qrcodeEncode: encode,
 	}
 	f.keyHandler = map[string]placeholderHandler{
-		FieldNameType: f.fieldNameKyeHandler,
-		ArrayType:     f.arrayKeyHandler,
-		QRCodeType:    f.qrCodeHandler,
-		ImageType:     f.imageHandler,
+		fieldNameType: f.fieldNameKyeHandler,
+		arrayType:     f.arrayKeyHandler,
+		qrCodeType:    f.qrCodeHandler,
+		imageType:     f.imageHandler,
 	}
 	return f
 }

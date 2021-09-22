@@ -1,6 +1,6 @@
 ## XLSX-TEMPLATER 
 
-Шаблонизатор для заполнения xlsx файлов данными из (?)
+Шаблонизатор для заполнения excel файлов данными из (?)
 
 ### Gratitude
 * github.com/qax-os/excelize

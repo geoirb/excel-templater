@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
-	"githab.com/geoirb/xlsx-templater"
+	"github.com/geoirb/excel-templater"
 	"github.com/xuri/excelize/v2"
 )
 
 func main() {
-	templater := xlsx.NewTemplater(true)
+	templater := excel.NewTemplater(true)
 
 	data, err := ioutil.ReadFile("examples/payload.json")
 	if err != nil {
@@ -28,7 +28,7 @@ func main() {
 		panic(err)
 	}
 
-	if err = file.SaveAs("examples/result.xlsx"); err != nil {
+	if err = file.SaveAs("examples/result.excel"); err != nil {
 		panic(err)
 	}
 }
