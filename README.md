@@ -1,4 +1,4 @@
-# XLSX-TEMPLATER
+# EXCEL-TEMPLATER
 
 Шаблонизатор для заполнения excel файла данными.
 
