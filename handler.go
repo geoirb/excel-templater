@@ -37,10 +37,11 @@ func (t *Templater) tableKeyHandler(file *excelize.File, sheet string, rowIdx, c
 			if err != nil {
 				return err
 			}
-			if placeholderType == fieldNameType {
+			if keyHandler, ok := t.keyHandler[placeholderType]; ok {
 				rowIdx := hRowNumb + i
-				t.fieldNameKyeHandler(file, sheet, &rowIdx, &j, value)
+				keyHandler(file, sheet, &rowIdx, colIdx, value)
 			}
+
 		}
 	}
 
