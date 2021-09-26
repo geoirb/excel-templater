@@ -2,7 +2,6 @@ package excel
 
 import (
 	"bytes"
-	"context"
 	"fmt"
 	"io"
 
@@ -21,7 +20,7 @@ type qrcodeEncodeFunc func(str string, pixels int) ([]byte, error)
 
 type placeholderHandler func(file *excelize.File, sheet string, rowNumb, colIdx *int, value interface{}) (err error)
 
-// Templater for excel.
+// Templater для заполнения excel файлов.
 type Templater struct {
 	keyHandler map[string]placeholderHandler
 
@@ -29,7 +28,7 @@ type Templater struct {
 	qrcodeEncode qrcodeEncodeFunc
 }
 
-// NewTemplater for excel.
+// NewTemplater возращает шаблонизатор.
 func NewTemplater(
 	valuesAreRequired bool,
 ) *Templater {
@@ -46,8 +45,8 @@ func NewTemplater(
 	return f
 }
 
-// FillIn template from payload.
-func (t *Templater) FillIn(ctx context.Context, template string, payload interface{}) (r io.Reader, err error) {
+// FillIn заполняет переданный шаблон данными данными из payload.
+func (t *Templater) FillIn(template string, payload interface{}) (r io.Reader, err error) {
 	f, err := excelize.OpenFile(template)
 	if err != nil {
 		return

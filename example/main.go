@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	_ "embed"
 	"encoding/json"
 
@@ -26,7 +25,7 @@ func main() {
 		panic(err)
 	}
 
-	r, err := templater.FillIn(context.Background(), templateFile, payload)
+	r, err := templater.FillIn(templateFile, payload)
 	if err != nil {
 		panic(err)
 	}

@@ -47,22 +47,16 @@ func (p *placeholder) GetValue(payload interface{}, placeholder string) (placeho
 	keys := p.placeholderReg.FindAllString(placeholder, -1)
 	for _, key := range keys {
 		var ok bool
-		placeholderType = fieldNameType
-		if p.tableRegexp.Match([]byte(key)) {
-			placeholderType = tableType
+		switch key {
+		case tableType, qrCodeType, imageType:
+			placeholderType = key
 			return
-		}
-		if p.qrCodeRegexp.Match([]byte(key)) {
-			placeholderType = qrCodeType
-		}
-		if p.imageReqexp.Match([]byte(key)) {
-			placeholderType = imageType
-		}
-		value, ok = p.value(value, key)
-
-		if !ok {
-			err = fmt.Errorf("wrong payload: not found key %s from placeholder %s", key, placeholder)
-			return
+		default:
+			placeholderType = fieldNameType
+			if value, ok = p.value(value, key); !ok {
+				err = fmt.Errorf("wrong payload: not found key %s from placeholder %s", key, placeholder)
+				return
+			}
 		}
 	}
 	return
