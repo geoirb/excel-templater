@@ -45,9 +45,6 @@ const (
 		"no_required":"no_required_value"
 	 }
 	`
-
-	testPlaceholder = "{test_placeholder}"
-	testStr         = "test-string"
 )
 
 type testCase struct {
@@ -96,15 +93,6 @@ var (
 		placeholderType: fieldNameType,
 	}
 )
-
-func TestIs(t *testing.T) {
-	p := newPlaceholdParser(
-		false,
-	)
-
-	assert.True(t, p.Is(testPlaceholder))
-	assert.False(t, p.Is(testStr))
-}
 
 func TestGetValue(t *testing.T) {
 	var payload interface{}

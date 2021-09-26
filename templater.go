@@ -79,27 +79,27 @@ func (t *Templater) fillInSheet(f *excelize.File, sheet string, payload interfac
 
 	for rowIdx := 0; rowIdx < len(rows); rowIdx++ {
 		for colIdx, cellValue := range rows[rowIdx] {
-			if t.placeholder.Is(cellValue) {
-				var (
-					placeholderType string
-					value           interface{}
-				)
-				placeholderType, value, err = t.placeholder.GetValue(payload, cellValue)
-				if err != nil {
+
+			var (
+				placeholderType string
+				value           interface{}
+			)
+			placeholderType, value, err = t.placeholder.GetValue(payload, cellValue)
+			// if err != nil {
+			// 	return
+			// }
+
+			if keyHandler, ok := t.keyHandler[placeholderType]; ok {
+				if err = keyHandler(f, sheet, &rowIdx, &colIdx, value); err != nil {
+					err = fmt.Errorf("placeholder: %s err: %s", cellValue, err)
 					return
 				}
-
-				if keyHandler, ok := t.keyHandler[placeholderType]; ok {
-					if err = keyHandler(f, sheet, &rowIdx, &colIdx, value); err != nil {
-						err = fmt.Errorf("placeholder: %s err: %s", cellValue, err)
-						return
-					}
-					if rows, err = f.GetRows(sheet); err != nil {
-						err = fmt.Errorf("placeholder: %s err: %s", cellValue, err)
-						return
-					}
+				if rows, err = f.GetRows(sheet); err != nil {
+					err = fmt.Errorf("placeholder: %s err: %s", cellValue, err)
+					return
 				}
 			}
+
 		}
 	}
 	return

@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	templateFile      = "example/template.xlsx"
+	templateFile      = "/home/geoirb/project/go/geoirb/excel-templater/example/template.xlsx"
 	resultFile        = "example/result.xlsx"
 	valuesAreRequired = true
 
