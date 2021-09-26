@@ -1,6 +1,4 @@
-ПЕРЕПИСАТЬ
-
-## XLSX-TEMPLATER
+# XLSX-TEMPLATER
 
 Шаблонизатор для заполнения excel файла данными.
 
