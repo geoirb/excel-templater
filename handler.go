@@ -58,31 +58,37 @@ func (t *Templater) tableKeyHandler(file *excelize.File, sheet string, rowIdx, c
 }
 
 func (t *Templater) qrCodeHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) (err error) {
-	qrcodeArr, ok := value.([]interface{})
-	if !ok {
-		err = fmt.Errorf("qrCodeHandler: wrong type payload, array type expected")
-		return
-	}
 	rowHeight, _ := file.GetRowHeight(sheet, *rowIdx+1)
 	qrcodePixels := pixelCoefficient * rowHeight
 
-	for _, qrcodeStr := range qrcodeArr {
-		str, ok := qrcodeStr.(string)
-		if !ok {
-			err = fmt.Errorf("qrCodeHandler: wrong type elements of array, string  type expected")
-			return
-		}
+	str, ok := value.(string)
+	if !ok {
+		err = fmt.Errorf("qrCodeHandler: wrong type elements of array, string  type expected")
+		return
+	}
 
-		var data []byte
-		if data, err = t.qrcodeEncode(str, int(qrcodePixels)); err != nil {
-			err = fmt.Errorf("qrCodeHandler: qrcode generate %s", err)
-			return
-		}
+	var data []byte
+	if data, err = t.qrcodeEncode(str, int(qrcodePixels)); err != nil {
+		err = fmt.Errorf("qrCodeHandler: qrcode generate %s", err)
+		return
+	}
+	axis, _ := excelize.CoordinatesToCellName(*colIdx+1, *rowIdx+1)
+	if err = file.AddPictureFromBytes(sheet, axis, "", "", ".png", data); err != nil {
+		err = fmt.Errorf("qrCodeHandler: insert qrcode to file %s", err)
+	}
+	return
+}
+
+func (t *Templater) qrCodeRowHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) (err error) {
+	qrcodeDataArr, ok := value.([]interface{})
+	if !ok {
+		err = fmt.Errorf("qrCodeListHandler: wrong type payload, array type expected")
+		return
+	}
+
+	for _, qrcodeData := range qrcodeDataArr {
+		t.qrCodeHandler(file, sheet, rowIdx, colIdx, qrcodeData)
 		axis, _ := excelize.CoordinatesToCellName(*colIdx+1, *rowIdx+1)
-		if err = file.AddPictureFromBytes(sheet, axis, "", "", ".png", data); err != nil {
-			err = fmt.Errorf("qrCodeHandler: insert qrcode to file %s", err)
-			return
-		}
 		file.SetCellValue(sheet, axis, "")
 		colNum, _, _ := getNumMergeCell(file, sheet, axis)
 		*colIdx += colNum

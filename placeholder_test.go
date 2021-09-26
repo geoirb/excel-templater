@@ -70,16 +70,16 @@ var (
 			placeholderType: fieldNameType,
 		},
 		{
-			placeholder:     "{data_to_B:image_0}",
+			placeholder:     "{data_to_B:image_0:image}",
 			value:           "image_value",
 			placeholderType: imageType,
 		},
 		{
-			placeholder:     "{data:array}",
+			placeholder:     "{data:table}",
 			placeholderType: tableType,
 		},
 		{
-			placeholder:     "{qr_code_0}",
+			placeholder:     "{qr_code_0:qr_code}",
 			placeholderType: qrCodeType,
 		},
 	}

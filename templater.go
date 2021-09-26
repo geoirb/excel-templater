@@ -11,8 +11,9 @@ import (
 const (
 	// placeholder types.
 	fieldNameType = "field_name"
-	tableType     = "array"
+	tableType     = "table"
 	qrCodeType    = "qr_code"
+	qrCodeRowType = "qr_code_row"
 	imageType     = "image"
 )
 
@@ -40,6 +41,7 @@ func NewTemplater(
 		fieldNameType: f.fieldNameKyeHandler,
 		tableType:     f.tableKeyHandler,
 		qrCodeType:    f.qrCodeHandler,
+		qrCodeRowType: f.qrCodeRowHandler,
 		imageType:     f.imageHandler,
 	}
 	return f

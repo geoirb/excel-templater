@@ -48,7 +48,7 @@ func (p *placeholder) GetValue(payload interface{}, placeholder string) (placeho
 	for _, key := range keys {
 		var ok bool
 		switch key {
-		case tableType, qrCodeType, imageType:
+		case tableType, qrCodeType, qrCodeRowType, imageType:
 			placeholderType = key
 			return
 		default:
