@@ -47,9 +47,9 @@ func NewTemplater(
 	return f
 }
 
-// FillIn заполняет переданный шаблон данными данными из payload.
-func (t *Templater) FillIn(template string, payload interface{}) (r io.Reader, err error) {
-	f, err := excelize.OpenFile(template)
+// FillIn заполняет файл расположенный по templatePath данными данными из payload.
+func (t *Templater) FillIn(templatePath string, payload interface{}) (r io.Reader, err error) {
+	f, err := excelize.OpenFile(templatePath)
 	if err != nil {
 		return
 	}
@@ -71,8 +71,9 @@ func (t *Templater) FillIn(template string, payload interface{}) (r io.Reader, e
 	return
 }
 
-func (t *Templater) fillInSheet(f *excelize.File, sheet string, payload interface{}) (err error) {
-	rows, err := f.GetRows(sheet)
+// Заполнение страницы файла данными из payload.
+func (t *Templater) fillInSheet(file *excelize.File, sheet string, payload interface{}) (err error) {
+	rows, err := file.GetRows(sheet)
 	if err != nil {
 		return
 	}
@@ -85,16 +86,16 @@ func (t *Templater) fillInSheet(f *excelize.File, sheet string, payload interfac
 				value           interface{}
 			)
 			placeholderType, value, err = t.placeholder.GetValue(payload, cellValue)
-			// if err != nil {
-			// 	return
-			// }
+			if err != nil {
+				return
+			}
 
 			if keyHandler, ok := t.keyHandler[placeholderType]; ok {
-				if err = keyHandler(f, sheet, &rowIdx, &colIdx, value); err != nil {
+				if err = keyHandler(file, sheet, &rowIdx, &colIdx, value); err != nil {
 					err = fmt.Errorf("placeholder: %s err: %s", cellValue, err)
 					return
 				}
-				if rows, err = f.GetRows(sheet); err != nil {
+				if rows, err = file.GetRows(sheet); err != nil {
 					err = fmt.Errorf("placeholder: %s err: %s", cellValue, err)
 					return
 				}
