@@ -1,15 +1,15 @@
 # EXCEL-TEMPLATER
 
-Шаблонизатор для заполнения excel файла данными.
+The simple templater for filling in excel (.xlsx .xls) file with data.
 
-Шаблонизатор поддерживает:
-* Вставки простых значений
-* Вставки таблиц
-* Вставки qr кода
-* Вставки несколько qr кодов в строку
-* Вставки png изображений
-* Значения по умолчанию (задается через флаг)
-* Заполнение многостраничных шаблонов
+Templater supports:
+* Insert simple values
+* Insert tabels
+* Insert qr codes
+* Insert list of qr codes
+* Insert png images.
+* Defaults values (turn on by flag)
+* Fill in многостраничных шаблонов
 
 Для заполнения данные должны быть представлены в формате, позволяющем сериализацию: json, yml и т.д. 
 
