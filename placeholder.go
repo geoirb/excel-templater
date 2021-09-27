@@ -14,14 +14,14 @@ type placeholder struct {
 	placeholderGroupReg *regexp.Regexp
 	placeholderReg      *regexp.Regexp
 
-	valuesAreRequired bool
+	useDefault bool
 }
 
 func newPlaceholdParser(
-	valuesAreRequired bool,
+	useDefault bool,
 ) *placeholder {
 	return &placeholder{
-		valuesAreRequired:   valuesAreRequired,
+		useDefault:          useDefault,
 		placeholderGroupReg: regexp.MustCompile(placeholderGroupRegexp),
 		placeholderReg:      regexp.MustCompile(placeholderReqexp),
 	}
@@ -52,7 +52,7 @@ func (p *placeholder) GetValue(payload interface{}, placeholder string) (placeho
 func (p *placeholder) value(payload interface{}, key string) (interface{}, bool) {
 	if m, ok := payload.(map[string]interface{}); ok {
 		value, isExist := m[key]
-		if !isExist && !p.valuesAreRequired {
+		if !isExist && p.useDefault {
 			value = ""
 			isExist = true
 		}

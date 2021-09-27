@@ -9,16 +9,16 @@ import (
 )
 
 var (
-	templateFile      = "/home/geoirb/project/go/geoirb/excel-templater/example/template.xlsx"
-	resultFile        = "example/result.xlsx"
-	valuesAreRequired = true
+	templateFile = "/home/geoirb/project/go/geoirb/excel-templater/example/template.xlsx"
+	resultFile   = "example/result.xlsx"
+	useDefault   = false
 
 	//go:embed payload.json
 	data []byte
 )
 
 func main() {
-	templater := excel.NewTemplater(valuesAreRequired)
+	templater := excel.NewTemplater(useDefault)
 
 	var payload interface{}
 	if err := json.Unmarshal(data, &payload); err != nil {

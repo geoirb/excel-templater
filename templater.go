@@ -30,11 +30,12 @@ type Templater struct {
 }
 
 // NewTemplater возращает шаблонизатор.
+// useDefault - флаг указывающий, что необходимо использовать вместо ненайденных значений.
 func NewTemplater(
-	valuesAreRequired bool,
+	useDefault bool,
 ) *Templater {
 	f := &Templater{
-		placeholder:  newPlaceholdParser(valuesAreRequired),
+		placeholder:  newPlaceholdParser(useDefault),
 		qrcodeEncode: encode,
 	}
 	f.keyHandler = map[string]placeholderHandler{
