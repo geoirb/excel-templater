@@ -9,7 +9,7 @@ Templater supports:
 * Insert list of qr codes
 * Insert png images.
 * Defaults values (turn on by flag)
-* Fill in многостраничных шаблонов
+* Fill in multipage file
 
 Для заполнения данные должны быть представлены в формате, позволяющем сериализацию: json, yml и т.д. 
 
