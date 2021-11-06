@@ -14,13 +14,13 @@ const (
 	pixelCoefficient = 1.34
 )
 
-func (t *Templater) fieldNameKyeHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) error {
+func (t *templater) fieldNameKyeHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) error {
 	axis, _ := excelize.CoordinatesToCellName(*colIdx+1, *rowIdx+1)
 	file.SetCellValue(sheet, axis, value)
 	return nil
 }
 
-func (t *Templater) tableKeyHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) error {
+func (t *templater) tableKeyHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) error {
 	array, ok := value.([]interface{})
 	if !ok {
 		return fmt.Errorf("tableKeyHandler: wrong type payload, array type expected")
@@ -59,7 +59,7 @@ func (t *Templater) tableKeyHandler(file *excelize.File, sheet string, rowIdx, c
 	return nil
 }
 
-func (t *Templater) qrCodeHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) (err error) {
+func (t *templater) qrCodeHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) (err error) {
 	rowHeight, _ := file.GetRowHeight(sheet, *rowIdx+1)
 	qrcodePixels := pixelCoefficient * rowHeight
 
@@ -82,7 +82,7 @@ func (t *Templater) qrCodeHandler(file *excelize.File, sheet string, rowIdx, col
 	return
 }
 
-func (t *Templater) qrCodeRowHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) (err error) {
+func (t *templater) qrCodeRowHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) (err error) {
 	qrcodeDataArr, ok := value.([]interface{})
 	if !ok {
 		err = fmt.Errorf("qrCodeListHandler: wrong type payload, array type expected")
@@ -98,7 +98,7 @@ func (t *Templater) qrCodeRowHandler(file *excelize.File, sheet string, rowIdx, 
 	return
 }
 
-func (s *Templater) imageHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) error {
+func (s *templater) imageHandler(file *excelize.File, sheet string, rowIdx, colIdx *int, value interface{}) error {
 	image, ok := value.(string)
 	if !ok {
 		return fmt.Errorf("imageHandler: wrong type payload, string type expected")

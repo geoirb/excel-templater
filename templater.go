@@ -21,20 +21,20 @@ type qrcodeEncodeFunc func(str string, pixels int) ([]byte, error)
 
 type placeholderHandler func(file *excelize.File, sheet string, rowNumb, colIdx *int, value interface{}) (err error)
 
-// Templater для заполнения excel файлов.
-type Templater struct {
+// templater для заполнения excel файлов.
+type templater struct {
 	keyHandler map[string]placeholderHandler
 
 	placeholder  *placeholder
 	qrcodeEncode qrcodeEncodeFunc
 }
 
-// NewTemplater возращает шаблонизатор.
-// useDefault - флаг указывающий, что необходимо использовать вместо ненайденных значений.
+// NewTemplater
+// useDefault - flag for turn on default values.
 func NewTemplater(
 	useDefault bool,
-) *Templater {
-	f := &Templater{
+) *templater {
+	f := &templater{
 		placeholder:  newPlaceholdParser(useDefault),
 		qrcodeEncode: encode,
 	}
@@ -48,8 +48,8 @@ func NewTemplater(
 	return f
 }
 
-// FillIn заполняет файл расположенный по templatePath данными данными из payload.
-func (t *Templater) FillIn(templatePath string, payload interface{}) (r io.Reader, err error) {
+// FillIn file by templatePath path with payload data.
+func (t *templater) FillIn(templatePath string, payload interface{}) (r io.Reader, err error) {
 	f, err := excelize.OpenFile(templatePath)
 	if err != nil {
 		return
@@ -72,8 +72,8 @@ func (t *Templater) FillIn(templatePath string, payload interface{}) (r io.Reade
 	return
 }
 
-// Заполнение страницы файла данными из payload.
-func (t *Templater) fillInSheet(file *excelize.File, sheet string, payload interface{}) (err error) {
+//  filling in on sheet.
+func (t *templater) fillInSheet(file *excelize.File, sheet string, payload interface{}) (err error) {
 	rows, err := file.GetRows(sheet)
 	if err != nil {
 		return

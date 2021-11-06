@@ -11,27 +11,33 @@ Templater supports:
 * Defaults values (turn on by flag)
 * Fill in multipage file
 
-Для заполнения данные должны быть представлены в формате, позволяющем сериализацию: json, yml и т.д. 
+Data for filling in must be in serializing format
 
 ## Placeholders
 
-Для корректного заполнения excel файла данными, файл должен содержать плейсхолдeры, в тех клетках, куда необходимо подставить значение. Плейсхолдер задает стиль подставляемого значения.
+For correct input data in excel file, file must have playsholders. The placeholder shows the template engine where and what data will be inserted and sets the style of inserted data.
 
-Плейсхолдер - это строка внутри `{ }`, состоящая из ключей типа `([_a-zA-Z0-9]+)`, разеделенных `:`, по ключам шаблонизатор определяет:
-- путь до значения - необходимо последовательно перечислить через `:` ключи полей в данных до необходимого значения
-- тип вставляемого значения, указывается последним ключом
-  
-| тип значения                           | ключ        | значение по умолчанию | тип данных       | описание                                                                                            |
-|----------------------------------------|-------------|-----------------------|------------------|-----------------------------------------------------------------------------------------------------|
-| простое значение                       |             | " "                   | любой            | будет вставлено все,что лежит по пути из плейсхолдера                                               |
-| qr код                                 | qr_code     | " "                   | не пустая строка | на основе значения будет сгенерирован и вставлен qr код, размер qr кода определяются высотой строки |
-| несколько qr коды для вставку в строку | qr_code_row |                       | массив строк     | массив qr кодов будет сгенерирован и вставлен в строку начиная с позиции плейсхолдера               |
-| изображение                            | image       | прозрачный пиксель    | base64-encoded PNG | плейсхолдер будет заменен на изображение  
-| таблица                                | table       |                       | массив объектов  | !!! строка с данным плейсхолдером будет удалена !!! из каждого объекта массива будет сгенерирована строка таблицы, для этого на следующей строке необходимо прописать плейсхолдеры, данная строка показывает где внутри объекта массива находтся данные, а так же задает стиль таблицы |
+Placeholder is string between `{ }`, string consisting of keys`([_a-zA-Z0-9]+)`, keys are separated by `:`.
+The placeholder shows the template engine:
+- style of inserted data - stile of placeholder
+- value of inserted data - set of keys in placeholder must be path to value in data for filling in
+- type of inserted data - last key
 
-Простое значение:
+### Supported types of inserted data 
 
-_Данные_
+| type          | key         | default value* | type of value in data for filling | describe                                                                                                                           |
+|---------------|-------------|----------------|-----------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| simple        |             | " "            | any type                          | the value will be inserted along the path from the placeholder                                                                     |
+| qr code       | qr_code     | " "            | not empty string                  | qr code wil be generated from value and it will be inserted in cell, hight of qr code will be equal hight of cell with placeholder |
+| qr code array | qr_code_row |                | array of not empty strings        | array of qr codes  will inserted in row, beginning cell is cell with placeholder                                                   |
+| image         | image       | transparent pixel    | base64-encoded PNG |   
+| table         | table       |                      | array of objects   | !!! строка с данным плейсхолдером будет удалена !!! из каждого объекта массива будет сгенерирована строка таблицы, для этого на следующей строке необходимо прописать плейсхолдеры, данная строка показывает где внутри объекта массива находятся данные, а так же задает стиль таблицы |
+
+* turn on by flag
+
+Simple:
+
+_Data for filling_
 
 ```json
 {
@@ -45,17 +51,17 @@ _Данные_
 }
 ```
 
-_Шаблон_
+_Template_
 
 ![simple_value_template](images/simple_value_template.png)
 
-_Результат_
+_Result_
 
 ![simple_value_result](images/simple_value_result.png)
 
-Qr код:
+Qr code:
 
-_Данные_
+_Data for filling_
 
 ```json
 {
@@ -68,18 +74,18 @@ _Данные_
 }
 ```
 
-_Шаблон_
+_Template_
 
 ![qr_code_template](images/qr_code_template.png)
 
-_Результат_
+_Result_
 
 ![qr_code_result](images/qr_code_result.png)
 
 
-Таблица:
+Table:
 
-_Данные_
+_Data for filling_
 
 ```json
 {
@@ -108,11 +114,11 @@ _Данные_
 }
 ```
 
-_Шаблон_
+_Template_
 
 ![table_template](images/table_template.png)
 
-_Результат_
+_Result_
 
 ![table_result](images/table_result.png)
 
