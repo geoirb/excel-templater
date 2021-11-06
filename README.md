@@ -25,15 +25,15 @@ The placeholder shows the template engine:
 
 ### Supported types of inserted data 
 
-| type          | key         | default value* | type of value in data for filling | describe                                                                                                                           |
-|---------------|-------------|----------------|-----------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
-| simple        |             | " "            | any type                          | the value will be inserted along the path from the placeholder                                                                     |
-| qr code       | qr_code     | " "            | not empty string                  | qr code wil be generated from value and it will be inserted in cell, hight of qr code will be equal hight of cell with placeholder |
-| qr code array | qr_code_row |                | array of not empty strings        | array of qr codes  will inserted in row, beginning cell is cell with placeholder                                                   |
+| type          | key         | default value (turn on by flag) | type of value in data for filling | describe                                                                                                                           |
+|---------------|-------------|---------------------------------|-----------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| simple        |             | " "                             | any type                          | the value will be inserted along the path from the placeholder                                                                     |
+| qr code       | qr_code     | " "                             | not empty string                  | qr code wil be generated from value and it will be inserted in cell, hight of qr code will be equal hight of cell with placeholder |
+| qr code array | qr_code_row |                                 | array of not empty strings        | array of qr codes  will inserted in row, beginning cell is cell with placeholder                                                   |
 | image         | image       | transparent pixel    | base64-encoded PNG |   
 | table         | table       |                      | array of objects   | !!! строка с данным плейсхолдером будет удалена !!! из каждого объекта массива будет сгенерирована строка таблицы, для этого на следующей строке необходимо прописать плейсхолдеры, данная строка показывает где внутри объекта массива находятся данные, а так же задает стиль таблицы |
 
-* turn on by flag
+### Examples
 
 Simple:
 
