@@ -17,9 +17,10 @@ const (
 	imageType     = "image"
 )
 
-type qrcodeEncodeFunc func(str string, pixels int) ([]byte, error)
-
-type placeholderHandler func(file *excelize.File, sheet string, rowNumb, colIdx *int, value interface{}) (err error)
+type (
+	qrcodeEncodeFunc   func(str string, pixels int) ([]byte, error)
+	placeholderHandler func(file *excelize.File, sheet string, rowNumb, colIdx *int, value interface{}) (err error)
+)
 
 // templater для заполнения excel файлов.
 type templater struct {
@@ -29,7 +30,7 @@ type templater struct {
 	qrcodeEncode qrcodeEncodeFunc
 }
 
-// NewTemplater
+// NewTemplater ...
 // useDefault - flag for turn on default values.
 func NewTemplater(
 	useDefault bool,
@@ -38,6 +39,7 @@ func NewTemplater(
 		placeholder:  newPlaceholdParser(useDefault),
 		qrcodeEncode: encode,
 	}
+
 	f.keyHandler = map[string]placeholderHandler{
 		fieldNameType: f.fieldNameKyeHandler,
 		tableType:     f.tableKeyHandler,
