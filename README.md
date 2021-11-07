@@ -30,8 +30,8 @@ The placeholder shows the template engine:
 | simple        |             | " "                             | any type                          | the value will be inserted along the path from the placeholder                                                                     |
 | qr code       | qr_code     | " "                             | not empty string                  | qr code wil be generated from value and it will be inserted in cell, hight of qr code will be equal hight of cell with placeholder |
 | qr code array | qr_code_row |                                 | array of not empty strings        | array of qr codes  will inserted in row, beginning cell is cell with placeholder                                                   |
-| image         | image       | transparent pixel    | base64-encoded PNG |   
-| table         | table       |                      | array of objects   | !!! строка с данным плейсхолдером будет удалена !!! из каждого объекта массива будет сгенерирована строка таблицы, для этого на следующей строке необходимо прописать плейсхолдеры, данная строка показывает где внутри объекта массива находятся данные, а так же задает стиль таблицы |
+| image         | image       | transparent pixel    			| base64-encoded PNG |   
+| table         | table       |                      			| array of objects   | __!!! row with this placeholder will be delete !!!__ Each object from array will be convert to row of genereted table. For right converting in next row after row with table placeholder's cell must have placeholders row, this placeholders needs for inserting values in columns of generated table, templayter find value in each object of array|
 
 ### Examples
 
