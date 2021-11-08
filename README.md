@@ -33,7 +33,7 @@ The placeholder shows the template engine:
 | qr code       | qr_code     | " "           | not empty string                  | the qr code will be generated from the value, and it will be inserted in a cell, height of qr code will be the equal height of the cell with the placeholder |
 | qr code array | qr_code_row |               | array of not empty strings        | the array of qr codes will be inserted in a row, starting with the placeholder cell                                                                          |
 | image         | image       | transparent pixel    			| base64-encoded PNG |   
-| table         | table       |                      			| array of objects   | __!!! row with this placeholder will be deleted!!!__ Each object from the array will be converted to the generated table row.  For right converting in the next row after a row with table a placeholder's cell must have a placeholders row, this placeholders needs for inserting values in columns of the generated table, the templater finds value in each object of the array|
+| table         | table       |                      			| array of objects   | __!!! row with this placeholder will be deleted!!!__ Each object from the array will be converted to the generated table row. For right converting in the next row after a row with table a placeholder's cell must have a placeholders row, this placeholders needs for inserting values in columns of the generated table, the templater finds value in each object of the array.|
 
 ### Examples 
 
